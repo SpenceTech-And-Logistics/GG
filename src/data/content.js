@@ -94,12 +94,14 @@ export const defaults = {
     phone: '',
     social: [
       { label: 'Facebook', url: 'https://www.facebook.com/GGkagombeMpGatunduSouth/' },
+      { label: 'X', url: 'https://x.com/GGKagombe' },
       { label: 'Instagram', url: 'https://www.instagram.com/ggkagombe/' },
       { label: 'LinkedIn', url: 'https://ke.linkedin.com/in/hon-gg-kagombe-52b76318' },
     ],
     links: [
       { label: 'Parliament of Kenya profile', url: 'https://www.parliament.go.ke/the-national-assembly/hon-kagombe-gabriel-gathuka' },
       { label: 'Mzalendo record', url: 'https://mzalendo.com/mps-performance/national-assembly/13th-parliament/kagombe-gabriel-gathuka/' },
+      { label: 'Gatundu South NG-CDF', url: 'https://gatundu-south.ngcdf.go.ke/' },
     ],
   },
   positions: [
