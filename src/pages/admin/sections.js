@@ -100,6 +100,21 @@ export const positionsConfig = {
     { key: 'category', label: 'Group' },
     { key: 'status', label: 'Status', render: badge },
   ],
+  importer: {
+    columns: ['title', 'organisation', 'category', 'period', 'order', 'description'],
+    example: ['Director', 'Theta Tea Factory', 'Business', '2018 to present', '60', 'One line on the role.'],
+    // Several roles share a title (e.g. Director), so match on title and organisation.
+    key: (d) => `${d.title}|${d.organisation}`,
+    map: (r) => ({
+      title: String(r.title || r.position || '').trim(),
+      organisation: String(r.organisation || r.organization || '').trim(),
+      category: POSITION_CATEGORIES.find((c) => c.toLowerCase() === String(r.category || r.group || '').trim().toLowerCase()) || 'Community',
+      period: String(r.period || r.when || ''),
+      order: Number(r.order) || 50,
+      description: String(r.description || ''),
+      status: 'published',
+    }),
+  },
 }
 
 export const pressConfig = {

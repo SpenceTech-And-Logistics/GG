@@ -92,13 +92,15 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     setMsg(null)
     try {
       const records = await readRecords(file)
-      const seen = new Set((items || []).map((i) => String(i.title || '').trim().toLowerCase()))
+      const keyOf = importer.key || ((d) => d.title)
+      const norm = (d) => String(keyOf(d) || '').trim().toLowerCase()
+      const seen = new Set((items || []).map(norm))
       const fresh = []
       let skipped = 0
       for (const r of records) {
         const doc = importer.map(r)
-        const key = String(doc.title || '').trim().toLowerCase()
-        if (!key || seen.has(key)) {
+        const key = norm(doc)
+        if (!String(doc.title || '').trim() || seen.has(key)) {
           skipped++
           continue
         }
@@ -112,7 +114,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         await batch.commit()
       }
       await reload()
-      setMsg({ text: `Imported ${fresh.length}. Skipped ${skipped} (empty or already listed by title).` })
+      setMsg({ text: `Imported ${fresh.length}. Skipped ${skipped} (empty or already listed).` })
     } catch (ex) {
       setMsg({ bad: true, text: ex.message })
     }
