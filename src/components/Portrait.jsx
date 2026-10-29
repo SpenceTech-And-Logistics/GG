@@ -2,14 +2,23 @@ import { useRef } from 'react'
 import { useScroll } from '../lib/hooks.js'
 import { useContent } from '../lib/useContent.js'
 
-// Drop a file called portrait.jpg (or .png / .webp) into src/assets/images and it is used automatically.
-const files = import.meta.glob('../assets/images/portrait.*', { eager: true, query: '?url', import: 'default' })
-const bundled = Object.values(files)[0] || ''
+// Drop image files into src/assets/images and they are used automatically:
+//   portrait.jpg       the main portrait, used anywhere without its own photo
+//   portrait-hero.jpg  the Home page hero
+//   portrait-home.jpg  the About section on the Home page
+//   portrait-about.jpg the About page
+// (.png and .webp work too.) Photos uploaded in the dashboard take priority.
+const files = import.meta.glob('../assets/images/portrait*.{jpg,jpeg,png,webp}', { eager: true, query: '?url', import: 'default' })
+const bundledFor = (name) => Object.entries(files).find(([path]) => new RegExp(`/${name}\\.\\w+$`).test(path))?.[1] || ''
 
-export default function Portrait({ className = '', parallax = true, eager = false }) {
+// Which dashboard field each spot reads.
+const FIELD = { hero: 'heroPhoto', home: 'homeAboutPhoto', about: 'aboutPhoto' }
+const FILE = { hero: 'portrait-hero', home: 'portrait-home', about: 'portrait-about' }
+
+export default function Portrait({ className = '', parallax = true, eager = false, slot = 'hero' }) {
   const { profile } = useContent()
   const ref = useRef(null)
-  const src = profile.photo || bundled
+  const src = profile[FIELD[slot]] || bundledFor(FILE[slot]) || profile.photo || bundledFor('portrait')
 
   useScroll((y) => {
     if (!parallax || !ref.current) return

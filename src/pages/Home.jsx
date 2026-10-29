@@ -37,7 +37,7 @@ export default function Home() {
           </div>
         </div>
         <div className="rise" style={{ '--d': '300ms' }}>
-          <Portrait eager />
+          <Portrait eager slot="hero" />
         </div>
       </section>
 
@@ -75,7 +75,7 @@ export default function Home() {
 
       <section className="wrap section-tight">
         <div className="split">
-          <Reveal variant="left"><Portrait parallax={false} /></Reveal>
+          <Reveal variant="left"><Portrait parallax={false} slot="home" /></Reveal>
           <Reveal variant="right" className="prose">
             <span className="eyebrow">About</span>
             <h2 className="title" style={{ marginBottom: 20 }}>From economics and tea to the National Assembly</h2>
