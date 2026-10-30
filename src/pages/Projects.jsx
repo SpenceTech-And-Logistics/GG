@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import Empty from '../components/Empty.jsx'
 import PageHead from '../components/PageHead.jsx'
 import { Reveal } from '../components/Reveal.jsx'
-import { money } from '../lib/media.js'
+import { money, yearLabel } from '../lib/media.js'
+import { coverOf } from '../lib/photos.js'
 import { useContent } from '../lib/useContent.js'
 
 export default function Projects() {
@@ -17,7 +18,7 @@ export default function Projects() {
       <PageHead
         eyebrow="Projects"
         title="Work delivered in Gatundu South"
-        lead="Health, education, roads and water, coffee and tea, youth and sports: what has been done, where and for whom."
+        lead="NG-CDF school works, roads and water, housing, skills and bursaries: what has been done in Gatundu South, where and for whom."
       />
       <section className="wrap section-tight">
         {projects.length === 0 ? (
@@ -37,12 +38,15 @@ export default function Projects() {
               {shown.map((p, i) => (
                 <Reveal key={p.id} delay={(i % 3) * 100}>
                   <Link to={`/projects/${p.id}`} className="card card-link">
-                    <div className="card-img">{p.photos?.[0] ? <img src={p.photos[0]} alt={p.title} loading="lazy" /> : <div className="img-fallback">{p.category?.[0]}</div>}</div>
+                    <div className="card-img">
+                      {coverOf('projects', p) ? <img src={coverOf('projects', p)} alt="" loading="lazy" /> : <div className="img-fallback">{p.category?.[0]}</div>}
+                      {p.progress && <span className={`img-count status-${p.progress.toLowerCase()}`}>{p.progress}</span>}
+                    </div>
                     <div className="card-body">
                       <span className="tag">{p.category}</span>
                       <h3>{p.title}</h3>
                       {p.description && <p>{p.description.length > 120 ? `${p.description.slice(0, 117)}…` : p.description}</p>}
-                      <span className="meta">{[p.ward, p.year, money(p.amount)].filter(Boolean).join(' · ')}</span>
+                      <span className="meta">{[p.ward, yearLabel(p.year), money(p.amount)].filter(Boolean).join(' · ')}</span>
                     </div>
                   </Link>
                 </Reveal>

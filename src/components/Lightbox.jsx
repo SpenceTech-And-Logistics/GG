@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { Link } from 'react-router-dom'
 
 export default function Lightbox({ items, index, onClose, onMove }) {
   const closeRef = useRef(null)
@@ -20,7 +22,8 @@ export default function Lightbox({ items, index, onClose, onMove }) {
   }, [onClose, onMove])
 
   if (!item) return null
-  return (
+  // Rendered on <body>: the page wrapper animates with a transform, which would trap a fixed overlay inside it.
+  return createPortal(
     <div className="lightbox" role="dialog" aria-modal="true" aria-label={item.title || 'Gallery viewer'} onClick={onClose}>
       <button ref={closeRef} type="button" className="lb-close" onClick={onClose} aria-label="Close viewer">
         ×
@@ -37,8 +40,15 @@ export default function Lightbox({ items, index, onClose, onMove }) {
         ) : (
           <img src={item.src} alt={item.title || 'Gallery photo'} />
         )}
-        {(item.title || item.caption) && <figcaption>{item.title}{item.caption ? ` · ${item.caption}` : ''}</figcaption>}
+        {(item.title || item.caption) && (
+          <figcaption>
+            {item.title}
+            {item.caption ? ` · ${item.caption}` : ''}
+            {item.href && <Link to={item.href} onClick={onClose}>{item.hrefLabel || 'Open'} →</Link>}
+          </figcaption>
+        )}
       </figure>
-    </div>
+    </div>,
+    document.body,
   )
 }

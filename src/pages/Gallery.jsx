@@ -4,28 +4,53 @@ import Lightbox from '../components/Lightbox.jsx'
 import PageHead from '../components/PageHead.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { videoInfo } from '../lib/media.js'
+import { allBundled, useGalleryDocs } from '../lib/photos.js'
 import { useContent } from '../lib/useContent.js'
 
+const LINK = {
+  events: { path: '/events/', label: 'See the event', category: 'Events' },
+  projects: { path: '/projects/', label: 'See the project', category: 'Projects' },
+}
+
 export default function Gallery() {
-  const { gallery, projects, press } = useContent()
+  const { projects, press, events } = useContent()
+  const docs = useGalleryDocs()
   const [cat, setCat] = useState('All')
   const [open, setOpen] = useState(-1)
 
-  // Standalone items + project photos + press images, all in one place.
+  // Standalone photos and videos, imported photos, built-in event and project photos, and press images.
   const all = useMemo(() => {
-    const own = gallery.map((g) => {
+    const titles = Object.fromEntries([...events.map((e) => [e.id, e.title]), ...projects.map((p) => [p.id, p.title])])
+    const own = docs.map((g) => {
       if (g.type === 'video') {
         const v = videoInfo(g.url)
         return { id: g.id, kind: 'video', title: g.title, category: 'Videos', thumb: g.thumb || v.thumb, embed: v.embed, url: g.url }
       }
-      return { id: g.id, kind: 'photo', title: g.title, category: g.category, src: g.src, thumb: g.src }
+      const link = LINK[g.linkType]
+      return {
+        id: g.id, kind: 'photo', src: g.src, thumb: g.src,
+        title: g.title || titles[g.linkId] || '',
+        category: link?.category || g.category,
+        ...(link && g.linkId ? { href: link.path + g.linkId, hrefLabel: link.label } : {}),
+      }
     })
-    const fromProjects = projects.flatMap((p) =>
-      (p.photos || []).map((src, i) => ({ id: `${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Projects', src, thumb: src })),
+    const built = (type, items) =>
+      allBundled(type, items).map(({ src, item, i }) => ({
+        id: `${type}-${item.id}-${i}`, kind: 'photo', src, thumb: src, title: item.title,
+        category: LINK[type].category, href: LINK[type].path + item.id, hrefLabel: LINK[type].label,
+      }))
+    const saved = projects.flatMap((p) =>
+      (p.photos || []).map((src, i) => ({ id: `${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Projects', src, thumb: src, href: `/projects/${p.id}`, hrefLabel: 'See the project' })),
+    )
+    const savedEvents = events.flatMap((e) =>
+      (e.photos || []).map((src, i) => ({ id: `${e.id}-${i}`, kind: 'photo', title: e.title, category: 'Events', src, thumb: src, href: `/events/${e.id}`, hrefLabel: 'See the event' })),
     )
     const fromPress = press.filter((n) => n.image).map((n) => ({ id: `press-${n.id}`, kind: 'photo', title: n.title, category: 'Press', src: n.image, thumb: n.image }))
-    return [...own, ...fromProjects, ...fromPress].filter((i) => i.thumb || i.kind === 'video')
-  }, [gallery, projects, press])
+    const seen = new Set()
+    return [...own, ...built('events', events), ...savedEvents, ...built('projects', projects), ...saved, ...fromPress]
+      .filter((i) => i.thumb || i.kind === 'video')
+      .filter((i) => (i.kind === 'video' ? true : !seen.has(i.src) && seen.add(i.src)))
+  }, [docs, projects, press, events])
 
   const cats = ['All', ...new Set(all.map((i) => i.category).filter(Boolean))]
   const shown = cat === 'All' ? all : all.filter((i) => i.category === cat)
@@ -64,7 +89,7 @@ export default function Gallery() {
                 )
               })}
             </div>
-            <p className="note">Photos open in a larger viewer. Pictures from projects and press link back to them.</p>
+            <p className="note">Photos open in a larger viewer, with a link to the event or project they come from.</p>
           </>
         )}
       </section>

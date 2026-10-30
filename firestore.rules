@@ -13,6 +13,7 @@ service cloud.firestore {
     match /press/{doc}      { allow read: if true; allow write: if isAdmin(); }
     match /gallery/{doc}    { allow read: if true; allow write: if isAdmin(); }
     match /positions/{doc}  { allow read: if true; allow write: if isAdmin(); }
+    match /events/{doc}     { allow read: if true; allow write: if isAdmin(); }
 
     // Contact form: visitors may send a message, only admins can read or delete.
     match /messages/{doc} {

@@ -4,8 +4,9 @@ import { firebaseReady, getAuthKit, getDb } from '../../lib/firebase.js'
 import CollectionEditor from './CollectionEditor.jsx'
 import DocEditor from './DocEditor.jsx'
 import Messages from './Messages.jsx'
+import PhotoImport from './PhotoImport.jsx'
 import {
-  contactDefaults, contactFields, galleryConfig, parliamentDefaults, parliamentFields,
+  contactDefaults, contactFields, eventsConfig, galleryConfig, parliamentDefaults, parliamentFields,
   positionsConfig, pressConfig, profileDefaults, profileFields, projectsConfig,
 } from './sections.js'
 import '../../styles/admin.css'
@@ -15,6 +16,8 @@ const NAV = [
   ['parliament', 'Parliament record'],
   ['positions', 'Positions'],
   ['projects', 'Projects'],
+  ['events', 'Events'],
+  ['photos', 'Photo import'],
   ['news', 'News and press'],
   ['gallery', 'Gallery'],
   ['messages', 'Messages'],
@@ -166,6 +169,12 @@ export default function AdminApp() {
       break
     case 'positions':
       body = <CollectionEditor {...positionsConfig} />
+      break
+    case 'events':
+      body = <CollectionEditor {...eventsConfig} />
+      break
+    case 'photos':
+      body = <PhotoImport />
       break
     case 'news':
       body = <CollectionEditor {...pressConfig} />

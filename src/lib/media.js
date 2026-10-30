@@ -40,3 +40,6 @@ export const formatDate = (d) => {
 }
 
 export const money = (n) => (n ? `KES ${Number(n).toLocaleString('en-KE')}` : '')
+
+/** '2022/23' reads as a financial year; plain years stay as they are. */
+export const yearLabel = (y) => (y && /\//.test(y) ? `FY ${y}` : y || '')

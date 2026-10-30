@@ -5,6 +5,8 @@ import Navbar from './components/Navbar.jsx'
 import { useScroll } from './lib/hooks.js'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
+import EventDetail from './pages/EventDetail.jsx'
+import Events from './pages/Events.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Home from './pages/Home.jsx'
 import News from './pages/News.jsx'
@@ -22,6 +24,7 @@ const TITLES = {
   '/parliament': 'Parliament',
   '/positions': 'Positions',
   '/projects': 'Projects',
+  '/events': 'Events',
   '/news': 'News',
   '/gallery': 'Gallery',
   '/contact': 'Contact',
@@ -33,7 +36,7 @@ function Layout() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const section = TITLES[pathname] || (pathname.startsWith('/projects/') ? 'Project' : '')
+    const section = TITLES[pathname] || (pathname.startsWith('/projects/') ? 'Project' : pathname.startsWith('/events/') ? 'Event' : '')
     document.title = section
       ? `${section} | Hon. Gabriel Gathuka Kagombe, MP Gatundu South`
       : 'Hon. Gabriel Gathuka Kagombe | MP for Gatundu South'
@@ -67,6 +70,8 @@ export default function App() {
         <Route path="positions" element={<Positions />} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
+        <Route path="events" element={<Events />} />
+        <Route path="events/:id" element={<EventDetail />} />
         <Route path="news" element={<News />} />
         <Route path="gallery" element={<Gallery />} />
         <Route path="contact" element={<Contact />} />

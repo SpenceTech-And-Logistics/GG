@@ -1,7 +1,19 @@
-import { CATEGORIES, GALLERY_CATEGORIES, NEWS_CATEGORIES, POSITION_CATEGORIES, defaults } from '../../data/content.js'
+import { CATEGORIES, EVENT_CATEGORIES, GALLERY_CATEGORIES, NEWS_CATEGORIES, POSITION_CATEGORIES, PROGRESS, defaults } from '../../data/content.js'
+import { bundledPhotos } from '../../lib/photos.js'
 
 const status = { key: 'status', label: 'Status', type: 'select', options: [{ value: 'published', label: 'Published' }, { value: 'draft', label: 'Draft (hidden)' }] }
 const badge = (it) => (it.status === 'draft' ? 'Draft' : 'Published')
+const photoCount = (type) => (it) => {
+  const n = bundledPhotos(type, it).length + (it.photos || []).length
+  return n ? `${n}${bundledPhotos(type, it).length ? ' built-in' : ''}` : '–'
+}
+const photoKeyField = {
+  key: 'photoKey',
+  label: 'Photo file name',
+  wide: true,
+  hint: 'How this item’s photo files are named, e.g. “KMTC” for KMTC (1).jpg, KMTC (2).jpg. Photo import uses it to sort photos here. Separate several with ;',
+}
+const fromKey = (r) => String(r.photokey || r.photo_key || r['photo file name'] || '')
 
 export const profileFields = [
   { key: 'name', label: 'Name as shown', wide: false },
@@ -46,36 +58,88 @@ export const contactFields = [
 export const projectsConfig = {
   coll: 'projects',
   title: 'Projects',
-  blurb: 'Add what was delivered in Gatundu South. Each project can have up to 5 photos, and they also appear in the Gallery. New items show on the site straight away.',
+  blurb: 'What has been done in Gatundu South. Add up to 5 photos here, or use Photo import for many at once. Photos also appear in the Gallery.',
   noun: 'Project',
-  empty: { title: '', category: CATEGORIES[0], year: String(new Date().getFullYear()), ward: '', amount: 0, description: '', photos: [], status: 'published' },
+  builtins: defaults.projects,
+  linked: true,
+  empty: { title: '', category: CATEGORIES[0], year: String(new Date().getFullYear()), progress: 'Completed', ward: '', amount: 0, description: '', source: '', photoKey: '', photos: [], status: 'published' },
   fields: [
     { key: 'title', label: 'Title', required: true, wide: true },
     { key: 'category', label: 'Category', type: 'select', options: CATEGORIES },
-    { key: 'year', label: 'Year' },
+    { key: 'year', label: 'Year or financial year', hint: 'e.g. 2026, or 2025/26 for a financial year' },
+    { key: 'progress', label: 'Status of works', type: 'select', options: [{ value: '', label: 'Not shown' }, ...PROGRESS] },
     { key: 'ward', label: 'Ward' },
     { key: 'amount', label: 'Amount (KES)', type: 'number' },
     { key: 'description', label: 'Description', type: 'textarea', wide: true, hint: 'One or two lines on what was done and who benefits.' },
-    { key: 'photos', label: 'Photos', type: 'images', max: 5, wide: true },
+    { key: 'source', label: 'Link to a report (optional)', type: 'url', wide: true },
+    photoKeyField,
+    { key: 'photos', label: 'Photos', type: 'images', max: 5, wide: true, hint: 'For more than 5, use Photo import.' },
     status,
   ],
   columns: [
     { key: 'title', label: 'Project' },
     { key: 'category', label: 'Category' },
     { key: 'year', label: 'Year' },
-    { key: 'photos', label: 'Photos', render: (it) => (it.photos || []).length },
+    { key: 'progress', label: 'Works' },
+    { key: 'photos', label: 'Photos', render: photoCount('projects') },
     { key: 'status', label: 'Status', render: badge },
   ],
   importer: {
-    columns: ['title', 'category', 'year', 'ward', 'amount', 'description'],
-    example: ['Classroom block', 'Education', '2025', 'Gatundu', '1500000', 'Four new classrooms and desks.'],
+    columns: ['title', 'category', 'year', 'progress', 'ward', 'amount', 'description', 'source', 'photokey'],
+    example: ['Classroom block', 'Education', '2025/26', 'Ongoing', 'Gatundu', '1500000', 'Four new classrooms and desks.', '', 'Classroom block'],
     map: (r) => ({
       title: String(r.title || '').trim(),
       category: CATEGORIES.includes(r.category) ? r.category : 'Other',
       year: String(r.year || ''),
       ward: String(r.ward || ''),
+      progress: PROGRESS.find((x) => x.toLowerCase() === String(r.progress || r.status || '').trim().toLowerCase()) || '',
       amount: Number(String(r.amount || '0').replace(/[^\d.]/g, '')) || 0,
       description: String(r.description || ''),
+      source: String(r.source || ''),
+      photoKey: fromKey(r),
+      photos: [],
+      status: 'published',
+    }),
+  },
+}
+
+export const eventsConfig = {
+  coll: 'events',
+  title: 'Events',
+  blurb: 'Launches, meetings, visits and community events, shown on the Events page. Use Photo import to add many photos at once.',
+  noun: 'Event',
+  builtins: defaults.events,
+  linked: true,
+  empty: { title: '', date: '', venue: '', category: EVENT_CATEGORIES[0], summary: '', source: '', photoKey: '', photos: [], status: 'published' },
+  fields: [
+    { key: 'title', label: 'Title', required: true, wide: true },
+    { key: 'date', label: 'Date', type: 'date' },
+    { key: 'venue', label: 'Venue' },
+    { key: 'category', label: 'Category', type: 'select', options: EVENT_CATEGORIES },
+    { key: 'summary', label: 'What happened', type: 'textarea', wide: true },
+    { key: 'source', label: 'Link to a report (optional)', type: 'url', wide: true },
+    photoKeyField,
+    { key: 'photos', label: 'Photos', type: 'images', max: 4, wide: true, hint: 'For more than 4, use Photo import.' },
+    status,
+  ],
+  columns: [
+    { key: 'title', label: 'Event' },
+    { key: 'date', label: 'Date' },
+    { key: 'category', label: 'Category' },
+    { key: 'photos', label: 'Photos', render: photoCount('events') },
+    { key: 'status', label: 'Status', render: badge },
+  ],
+  importer: {
+    columns: ['title', 'date', 'venue', 'category', 'summary', 'source', 'photokey'],
+    example: ['Launch of the market', '2026-05-12', 'Gathage', 'Constituency', 'One or two lines on what happened.', '', 'Market launch'],
+    map: (r) => ({
+      title: String(r.title || '').trim(),
+      date: String(r.date || ''),
+      venue: String(r.venue || ''),
+      category: EVENT_CATEGORIES.find((c) => c.toLowerCase() === String(r.category || '').trim().toLowerCase()) || 'Other',
+      summary: String(r.summary || r.description || ''),
+      source: String(r.source || r.url || ''),
+      photoKey: fromKey(r),
       photos: [],
       status: 'published',
     }),
@@ -161,7 +225,7 @@ export const pressConfig = {
 export const galleryConfig = {
   coll: 'gallery',
   title: 'Gallery',
-  blurb: 'Standalone photos and videos. Project photos and news photos appear here automatically.',
+  blurb: 'Standalone photos and videos, plus every photo added with Photo import (marked with the event or project it belongs to). Built-in and project photos appear on the site automatically.',
   noun: 'Item',
   empty: { type: 'photo', title: '', category: GALLERY_CATEGORIES[0], src: '', url: '', status: 'published' },
   fields: [
@@ -176,6 +240,7 @@ export const galleryConfig = {
     { key: 'type', label: 'Type', render: (it) => (it.type === 'video' ? 'Video' : 'Photo') },
     { key: 'title', label: 'Caption' },
     { key: 'category', label: 'Category' },
+    { key: 'linkId', label: 'Belongs to', render: (it) => (it.linkId ? `${it.linkType === 'events' ? 'Event' : 'Project'}: ${it.title || it.linkId}` : '–') },
     { key: 'status', label: 'Status', render: badge },
   ],
 }

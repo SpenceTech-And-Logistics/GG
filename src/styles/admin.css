@@ -70,3 +70,22 @@
 .adm-signin .adm-btn { padding: 15px 24px; font-size: 16px; }
 .adm-signin .adm-link { align-self: flex-start; }
 .adm-uid { display: block; background: #efe9da; padding: 12px; border-radius: 8px; word-break: break-all; user-select: all; }
+
+/* built-in content banner */
+.adm-banner { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: center; justify-content: space-between; background: #fff7e8; border: 1px solid #ecd6ad; border-radius: 12px; padding: 16px 20px; }
+.adm-banner p { margin: 0; flex: 1 1 360px; font-size: 14px; line-height: 1.5; }
+
+/* photo import */
+.adm-help { display: block; margin-top: 14px; color: var(--muted); font-size: 13px; line-height: 1.5; max-width: 760px; }
+.adm-import-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; padding: 18px 18px 6px; font-size: 14px; }
+.adm-import-head label { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--muted); }
+.adm-import img { width: 72px; height: 54px; object-fit: cover; border-radius: 6px; display: block; }
+.adm-import td:first-child { width: 88px; }
+.adm-import select { width: 100%; min-width: 220px; max-width: 420px; }
+.adm-import small { color: var(--muted); }
+.adm-import .adm-note { display: block; margin-top: 6px; max-width: 420px; line-height: 1.4; }
+.adm-import tr.is-skip td { opacity: 0.55; }
+.adm-import-foot { padding: 18px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
+.adm-progress { position: relative; width: 100%; height: 34px; border-radius: 99px; background: #efe9da; overflow: hidden; }
+.adm-progress span { position: absolute; inset: 0 auto 0 0; background: var(--forest); transition: width 0.3s; }
+.adm-progress small { position: relative; display: block; text-align: center; line-height: 34px; font-weight: 600; color: #fff; mix-blend-mode: difference; }

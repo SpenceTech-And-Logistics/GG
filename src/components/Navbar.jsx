@@ -8,6 +8,7 @@ const links = [
   ['/parliament', 'Parliament'],
   ['/positions', 'Positions'],
   ['/projects', 'Projects'],
+  ['/events', 'Events'],
   ['/news', 'News'],
   ['/gallery', 'Gallery'],
   ['/contact', 'Contact'],

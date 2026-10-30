@@ -23,6 +23,7 @@ export default function Footer() {
           <Link to="/parliament">Parliament</Link>
           <Link to="/positions">Positions</Link>
           <Link to="/projects">Projects</Link>
+          <Link to="/events">Events</Link>
           <Link to="/news">News</Link>
           <Link to="/gallery">Gallery</Link>
           <Link to="/contact">Contact</Link>

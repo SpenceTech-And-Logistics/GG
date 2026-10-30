@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getDb } from '../../lib/firebase.js'
 import { csvTemplate, readRecords, saveText } from '../../lib/importer.js'
+import { forgetPhotoCache } from '../../lib/photos.js'
+import { copyBuiltins, deleteLinkedPhotos } from './builtins.js'
 import { useContent } from '../../lib/useContent.js'
 import { Field } from './Fields.jsx'
 
 /**
  * A list of records (projects, news, gallery) with add, edit, delete and optional import from CSV or JSON.
- * Props: coll, title, blurb, noun, fields, columns, empty, importer?: { columns, example, map }
+ * Props: coll, title, blurb, noun, fields, columns, empty, importer?: { columns, example, map },
+ *   builtins? (built-in items that can be copied in), linked? (delete the item's imported photos with it)
  */
-export default function CollectionEditor({ coll, title, blurb, noun, fields, columns, empty, importer }) {
+export default function CollectionEditor({ coll, title, blurb, noun, fields, columns, empty, importer, builtins, linked }) {
   const { refresh } = useContent()
   const [items, setItems] = useState(null)
   const [editing, setEditing] = useState(null) // null | 'new' | id
@@ -36,7 +39,29 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
 
   const reload = async () => {
     setItems(await load())
+    forgetPhotoCache()
     refresh()
+  }
+
+  // Built-in items the dashboard does not have yet.
+  const missing = builtins && items ? builtins.filter((b) => !items.some((i) => i.id === b.id)) : []
+
+  /** Before the first item is added, copy the built-in ones in so they do not vanish from the site. */
+  async function keepBuiltins() {
+    if (builtins && items && items.length === 0) await copyBuiltins(coll, builtins)
+  }
+
+  async function copyIn() {
+    setBusy(true)
+    setMsg(null)
+    try {
+      const n = await copyBuiltins(coll, builtins, items.map((i) => i.id))
+      await reload()
+      setMsg({ text: `Copied ${n} built-in ${title.toLowerCase()} into the dashboard. Their photos stay attached.` })
+    } catch (ex) {
+      setMsg({ bad: true, text: ex.message })
+    }
+    setBusy(false)
   }
 
   function startNew() {
@@ -62,7 +87,10 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       const { fs, db } = await getDb()
       const { createdAt, ...data } = form
       if (JSON.stringify(data).length > 950000) throw new Error('Too large to save. Remove a photo or two, or use smaller photos.')
-      if (editing === 'new') await fs.addDoc(fs.collection(db, coll), { ...data, createdAt: fs.serverTimestamp() })
+      if (editing === 'new') {
+        await keepBuiltins()
+        await fs.addDoc(fs.collection(db, coll), { ...data, createdAt: fs.serverTimestamp() })
+      }
       else await fs.setDoc(fs.doc(db, coll, editing), { ...data, ...(createdAt ? { createdAt } : {}) })
       await reload()
       setEditing(null)
@@ -77,6 +105,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     try {
       const { fs, db } = await getDb()
       await fs.deleteDoc(fs.doc(db, coll, id))
+      if (linked) await deleteLinkedPhotos(id)
       setConfirm('')
       await reload()
     } catch (ex) {
@@ -108,6 +137,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         fresh.push(doc)
       }
       const { fs, db } = await getDb()
+      if (fresh.length) await keepBuiltins()
       for (let i = 0; i < fresh.length; i += 400) {
         const batch = fs.writeBatch(db)
         fresh.slice(i, i + 400).forEach((d) => batch.set(fs.doc(fs.collection(db, coll)), { ...d, createdAt: fs.serverTimestamp() }))
@@ -141,6 +171,17 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
 
       {msg && <p className={msg.bad ? 'adm-alert' : 'adm-ok'} role="status">{msg.text}</p>}
 
+      {missing.length > 0 && (
+        <div className="adm-banner">
+          <p>
+            <b>{missing.length} built-in {missing.length === 1 ? noun.toLowerCase() : title.toLowerCase()}</b> {missing.length === 1 ? 'shows' : 'show'} on the site but {missing.length === 1 ? 'is' : 'are'} not in the dashboard yet.
+            Copy them in to edit them. Their photos stay attached.
+            {items.length === 0 && ' If you add a new one first, they are copied in automatically so nothing disappears from the site.'}
+          </p>
+          <button type="button" className="adm-btn" onClick={copyIn} disabled={busy}>Copy built-in {title.toLowerCase()}</button>
+        </div>
+      )}
+
       {editing && (
         <form className="adm-panel" onSubmit={save}>
           <h2>{editing === 'new' ? `New ${noun.toLowerCase()}` : `Edit ${noun.toLowerCase()}`}</h2>
@@ -158,7 +199,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         {items === null ? (
           <p className="adm-pad">Loading…</p>
         ) : items.length === 0 ? (
-          <p className="adm-pad">Nothing here yet. Use “Add {noun.toLowerCase()}”{importer ? ' or “Import from file”' : ''}. Until you add one, the public site shows its built-in content.</p>
+          <p className="adm-pad">Nothing here yet. Use “Add {noun.toLowerCase()}”{importer ? ' or “Import from file”' : ''}{builtins ? ', or copy the built-in ones in above' : ''}. Until you add one, the public site shows its built-in content.</p>
         ) : (
           <div className="adm-scroll">
             <table className="adm-table">

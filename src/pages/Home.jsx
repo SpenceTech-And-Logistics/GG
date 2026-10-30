@@ -3,10 +3,11 @@ import { CountUp, Reveal } from '../components/Reveal.jsx'
 import Marquee from '../components/Marquee.jsx'
 import Portrait from '../components/Portrait.jsx'
 import { useContent } from '../lib/useContent.js'
-import { formatDate } from '../lib/media.js'
+import { formatDate, yearLabel } from '../lib/media.js'
+import { coverOf } from '../lib/photos.js'
 
 export default function Home() {
-  const { profile, parliament, press, projects, positions, contact } = useContent()
+  const { profile, parliament, press, projects, positions, contact, events } = useContent()
   const socials = (contact.social || []).filter((l) => l.url)
   const news = press.slice(0, 3)
 
@@ -128,7 +129,7 @@ export default function Home() {
           <Reveal className="section-head">
             <div>
               <span className="eyebrow">Projects</span>
-              <h2 className="title">Delivered in Gatundu South</h2>
+              <h2 className="title">Work in Gatundu South</h2>
             </div>
             <Link to="/projects" className="link-arrow">All projects <span>→</span></Link>
           </Reveal>
@@ -136,11 +137,37 @@ export default function Home() {
             {projects.slice(0, 3).map((p, i) => (
               <Reveal key={p.id} delay={i * 100}>
                 <Link to={`/projects/${p.id}`} className="card card-link">
-                  <div className="card-img">{p.photos?.[0] ? <img src={p.photos[0]} alt={p.title} loading="lazy" /> : <div className="img-fallback">{p.category?.[0]}</div>}</div>
+                  <div className="card-img">{coverOf('projects', p) ? <img src={coverOf('projects', p)} alt="" loading="lazy" /> : <div className="img-fallback">{p.category?.[0]}</div>}</div>
                   <div className="card-body">
                     <span className="tag">{p.category}</span>
                     <h3>{p.title}</h3>
-                    <span className="meta">{[p.ward, p.year].filter(Boolean).join(' · ')}</span>
+                    <span className="meta">{[p.ward, yearLabel(p.year), p.progress].filter(Boolean).join(' · ')}</span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {events.length > 0 && (
+        <section className="wrap section-tight">
+          <Reveal className="section-head">
+            <div>
+              <span className="eyebrow">Events</span>
+              <h2 className="title">Out and about</h2>
+            </div>
+            <Link to="/events" className="link-arrow">All events <span>→</span></Link>
+          </Reveal>
+          <div className="grid grid-3">
+            {events.slice(0, 3).map((e, i) => (
+              <Reveal key={e.id} delay={i * 100}>
+                <Link to={`/events/${e.id}`} className="card card-link">
+                  <div className="card-img">{coverOf('events', e) ? <img src={coverOf('events', e)} alt="" loading="lazy" /> : <div className="img-fallback">{e.category?.[0] || 'E'}</div>}</div>
+                  <div className="card-body">
+                    <span className="tag">{e.category || 'Event'}</span>
+                    <h3>{e.title}</h3>
+                    <span className="meta">{[formatDate(e.date), e.venue].filter(Boolean).join(' · ')}</span>
                   </div>
                 </Link>
               </Reveal>
