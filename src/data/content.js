@@ -180,6 +180,7 @@ export const defaults = {
     },
     {
       id: 'ngcdf-skills',
+      seoTitle: 'NG-CDF short courses for youth in Gatundu South',
       title: 'NG-CDF short courses: hair and beauty, catering and driving',
       category: 'Youth and sports',
       year: '2023 to 2026',
@@ -192,12 +193,13 @@ export const defaults = {
     },
     {
       id: 'gathage-road',
+      seoTitle: 'Gathage–Kahuguini road tarmacking, Gatundu South',
       title: 'Gathage–Kahuguini–Kwa Magemio–Gwa Kimanga road',
       category: 'Roads and water',
       year: '2026',
       ward: 'Gatundu South',
       amount: 0,
-      description: 'Tarmacking of a 5.5 km road, launched by the MP in January 2026.',
+      description: 'Tarmacking of the 5.5 km Gathage–Kahuguini–Kwa Magemio–Gwa Kimanga road in Gatundu South, launched by the MP in January 2026.',
       progress: 'Ongoing',
       source: 'https://saccoreview.co.ke/trade-boost-in-gatundu-south-as-implementation-of-infrastructural-projects-gains-momentum/',
       photos: [],
@@ -209,13 +211,14 @@ export const defaults = {
       year: '2026',
       ward: 'Gatundu South',
       amount: 0,
-      description: 'Road works reported complete by the MP in January 2026.',
+      description: 'Works on the Kagema–Karatu road in Gatundu South, reported complete by the MP in January 2026.',
       progress: 'Completed',
       source: 'https://saccoreview.co.ke/trade-boost-in-gatundu-south-as-implementation-of-infrastructural-projects-gains-momentum/',
       photos: [],
     },
     {
       id: 'kiganjo-gitwe-road',
+      seoTitle: 'Kiganjo–Mumbu-ini–Gitwe road, Gatundu South',
       title: 'Kiganjo–Mumbu-ini–Gitwe road (Mau Mau road)',
       category: 'Roads and water',
       year: '2026',
@@ -460,6 +463,7 @@ export const defaults = {
   events: [
     {
       id: 'lipton-tea-academy',
+      seoTitle: 'Lipton tea academy launch at University of Kabianga',
       title: 'Launch of the Lipton Innovation and Technology Academy',
       date: '2024-02-22',
       venue: 'University of Kabianga',
@@ -470,6 +474,7 @@ export const defaults = {
     },
     {
       id: 'kmtc-pep-launch',
+      seoTitle: 'Health-education partnership launched at KMTC Gatundu',
       title: 'Launch of the Partnership for Education of Health Professionals at KMTC Gatundu',
       date: '2024-01-31',
       venue: 'KMTC Gatundu campus',
@@ -480,6 +485,7 @@ export const defaults = {
     },
     {
       id: 'kirdi-visit',
+      seoTitle: 'Visit to KIRDI and its Food Technology Research Centre',
       title: 'Visit to the Kenya Industrial Research and Development Institute (KIRDI)',
       date: '2024-01-25',
       venue: 'KIRDI and its Food Technology Research Centre',
@@ -500,6 +506,7 @@ export const defaults = {
     },
     {
       id: 'dp-residence-kiambu-leaders',
+      seoTitle: 'Kiambu leaders’ talks with Governor Wamatangi',
       title: 'Kiambu leaders meet Governor Wamatangi at the Deputy President’s residence',
       date: '2023-11-06',
       venue: 'Deputy President’s official residence, Karen, Nairobi',

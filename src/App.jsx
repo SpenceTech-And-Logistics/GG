@@ -3,6 +3,7 @@ import { Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Footer from './components/Footer.jsx'
 import Navbar from './components/Navbar.jsx'
 import { useScroll } from './lib/hooks.js'
+import { useSeo } from './lib/useSeo.js'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import EventDetail from './pages/EventDetail.jsx'
@@ -19,27 +20,13 @@ import Projects from './pages/Projects.jsx'
 // The dashboard (and Firebase Auth) is only downloaded when someone opens /admin.
 const AdminApp = lazy(() => import('./pages/admin/AdminApp.jsx'))
 
-const TITLES = {
-  '/about': 'About',
-  '/parliament': 'Parliament',
-  '/positions': 'Positions',
-  '/projects': 'Projects',
-  '/events': 'Events',
-  '/news': 'News',
-  '/gallery': 'Gallery',
-  '/contact': 'Contact',
-}
-
 function Layout() {
   const { pathname } = useLocation()
   const bar = useRef(null)
 
+  useSeo()
   useEffect(() => {
     window.scrollTo(0, 0)
-    const section = TITLES[pathname] || (pathname.startsWith('/projects/') ? 'Project' : pathname.startsWith('/events/') ? 'Event' : '')
-    document.title = section
-      ? `${section} | Hon. Gabriel Gathuka Kagombe, MP Gatundu South`
-      : 'Hon. Gabriel Gathuka Kagombe | MP for Gatundu South'
   }, [pathname])
 
   useScroll((y) => {
