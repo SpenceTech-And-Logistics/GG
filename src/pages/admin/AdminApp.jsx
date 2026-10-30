@@ -73,6 +73,7 @@ function SignIn({ kit }) {
         <button className="adm-btn" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
         <button type="button" className="adm-link" onClick={reset}>Forgot password?</button>
         <small>Accounts are created by the site owner in Firebase. Signed-in users who are not administrators see a “no access” message.</small>
+        <Link to="/" className="adm-link">← Back to the website</Link>
       </form>
     </div>
   )
@@ -155,6 +156,7 @@ export default function AdminApp() {
           <p>To grant access, the site owner creates a document in <code>admins</code> with this ID and the field <code>ok = true</code>:</p>
           <code className="adm-uid">{user?.uid}</code>
           <button className="adm-btn" onClick={() => kit.fa.signOut(kit.auth)}>Sign out</button>
+          <Link to="/" className="adm-link">← Back to the website</Link>
         </div>
       </div>
     )
@@ -195,7 +197,8 @@ export default function AdminApp() {
   return (
     <div className="adm">
       <aside className="adm-side">
-        <div className="adm-brand"><span>GK</span><b>Site dashboard</b></div>
+        <Link to="/" className="adm-brand" title="Go to the website"><span>GK</span><b>Site dashboard</b></Link>
+        <Link to="/" className="adm-home">← Back to the website</Link>
         <nav>
           {NAV.map(([key, label]) => (
             <NavLink key={key} to={`/admin/${key}`} className={section === key ? 'active' : ''}>
@@ -205,7 +208,7 @@ export default function AdminApp() {
           ))}
         </nav>
         <div className="adm-side-foot">
-          <Link to="/" target="_blank">View site ↗</Link>
+          <Link to="/" target="_blank" rel="noreferrer">Open the website in a new tab ↗</Link>
           <button type="button" onClick={() => kit.fa.signOut(kit.auth)}>Sign out</button>
         </div>
       </aside>
