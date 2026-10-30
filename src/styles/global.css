@@ -303,8 +303,16 @@ label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-w
 .follow-band h2 { font-size: clamp(24px, 3vw, 34px); }
 .follow-band .chip { background: rgba(255, 255, 255, .12); color: #fff; border-color: rgba(255, 255, 255, .3); }
 .follow-band .chip:hover { background: #fff; color: var(--forest); }
-.footer-social { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; }
-.footer-social a { text-decoration: underline; text-underline-offset: 3px; }
+/* social media icons */
+.social-icons { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.social-icons a { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--forest); color: var(--forest); transition: background 0.2s, color 0.2s, transform 0.2s; }
+.social-icons a:hover, .social-icons a:focus-visible { background: var(--forest); color: #fff; transform: translateY(-2px); }
+.social-icons svg { width: 18px; height: 18px; fill: currentColor; }
+.social-icons.on-dark a { border-color: rgba(255, 255, 255, 0.35); color: #fff; background: rgba(255, 255, 255, 0.08); }
+.social-icons.on-dark a:hover, .social-icons.on-dark a:focus-visible { background: #fff; color: var(--forest); border-color: #fff; }
+.social-icons.large a { width: 52px; height: 52px; }
+.social-icons.large svg { width: 22px; height: 22px; }
+.footer-contact .social-icons { margin-top: 10px; }
 .page { overflow-x: clip; }
 
 /* lightbox link back to the event or project */

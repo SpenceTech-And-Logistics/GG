@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageHead from '../components/PageHead.jsx'
+import SocialLinks from '../components/SocialLinks.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { firebaseReady, getDb } from '../lib/firebase.js'
 import { useContent } from '../lib/useContent.js'
@@ -44,7 +45,8 @@ export default function Contact() {
     ['Email', contact.email],
     ['Phone', contact.phone],
   ]
-  const links = [...(contact.social || []), ...(contact.links || [])].filter((l) => l.url)
+  const socials = (contact.social || []).filter((l) => l.url)
+  const links = (contact.links || []).filter((l) => l.url)
 
   return (
     <>
@@ -95,12 +97,15 @@ export default function Contact() {
                 ))}
               </dl>
             </div>
-            {links.length > 0 && (
+            {(socials.length > 0 || links.length > 0) && (
               <div className="panel">
                 <h3 style={{ fontSize: 22, marginBottom: 14 }}>Follow</h3>
-                <div className="chips">
-                  {links.map((l) => <a key={l.url} className="chip" href={l.url} target="_blank" rel="noreferrer">{l.label || l.url}</a>)}
-                </div>
+                <SocialLinks links={socials} />
+                {links.length > 0 && (
+                  <div className="chips" style={{ marginTop: socials.length ? 18 : 0 }}>
+                    {links.map((l) => <a key={l.url} className="chip" href={l.url} target="_blank" rel="noreferrer">{l.label || l.url}</a>)}
+                  </div>
+                )}
               </div>
             )}
           </Reveal>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { CountUp, Reveal } from '../components/Reveal.jsx'
 import Marquee from '../components/Marquee.jsx'
 import Portrait from '../components/Portrait.jsx'
+import SocialLinks from '../components/SocialLinks.jsx'
 import { useContent } from '../lib/useContent.js'
 import { formatDate, yearLabel } from '../lib/media.js'
 import { coverOf } from '../lib/photos.js'
@@ -200,9 +201,7 @@ export default function Home() {
         <section className="wrap section-tight">
           <Reveal className="follow-band">
             <h2>Follow the Member</h2>
-            <div className="chips">
-              {socials.map((l) => <a key={l.url} className="chip" href={l.url} target="_blank" rel="noreferrer">{l.label || l.url}</a>)}
-            </div>
+            <SocialLinks links={socials} className="on-dark large" />
           </Reveal>
         </section>
       )}

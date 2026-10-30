@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useContent } from '../lib/useContent.js'
+import SocialLinks from './SocialLinks.jsx'
 
 export default function Footer() {
   const { contact } = useContent()
@@ -32,11 +33,7 @@ export default function Footer() {
           <span>{contact.parliament}</span>
           {contact.email && <span>{contact.email}</span>}
           {contact.phone && <span>{contact.phone}</span>}
-          {socials.length > 0 && (
-            <span className="footer-social">
-              {socials.map((l) => <a key={l.url} href={l.url} target="_blank" rel="noreferrer">{l.label || l.url}</a>)}
-            </span>
-          )}
+          <SocialLinks links={socials} className="on-dark" />
         </div>
       </div>
       <div className="footer-bar">
