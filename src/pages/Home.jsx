@@ -30,7 +30,7 @@ export default function Home() {
           <p className="lead rise" style={{ '--d': '220ms' }}>{profile.intro}</p>
           <div className="hero-actions rise" style={{ '--d': '340ms' }}>
             <Link to="/parliament" className="btn btn-solid">See the record</Link>
-            <Link to="/about" className="btn btn-ghost">About Hon. Kagombe</Link>
+            <Link to="/about" className="btn btn-ghost">About Hon. GG</Link>
           </div>
           <div className="hero-meta rise" style={{ '--d': '460ms' }}>
             <span><b>{profile.party}</b>Party</span>
