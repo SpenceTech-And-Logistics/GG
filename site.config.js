@@ -4,7 +4,7 @@
 export const siteConfig = {
   // The live address, with https:// and no slash at the end. Needed for the sitemap, canonical links
   // and link previews (WhatsApp, Facebook, X need full image addresses).
-  siteUrl: "", // e.g. "https://www.ggkagombe.co.ke" or the workers.dev address
+  siteUrl: "https://gg-kagombe.spencetechandlogistics.workers.dev", // change to the custom domain when there is one
   seo: {
     // Paste the code from Google Search Console / Bing Webmaster Tools (HTML tag method, content="…" part only).
     googleSiteVerification: "",

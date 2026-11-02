@@ -8,20 +8,20 @@ Last updated: 2 November 2026.
 | Area | Status | Notes |
 |---|---|---|
 | Page titles and descriptions | Done | Every page, generated from the content (`src/lib/seo.js`). |
-| Link previews (WhatsApp, Facebook, X) | Done, needs domain | Share image per page; the full image address needs `siteUrl`. |
+| Link previews (WhatsApp, Facebook, X) | Done | Share image per page, full addresses. |
 | Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (43 pages). |
 | Structured data (schema.org) | Done | Person + WebSite (home), Person (About), Event (dated events), breadcrumbs (all inner pages). |
-| sitemap.xml with images | Ready, needs domain | Written at build time once `siteUrl` is set: 43 pages, 157 photos. |
+| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 43 pages, 157 photos. |
 | robots.txt | Done | `/admin` blocked; sitemap line added once `siteUrl` is set. |
 | Dashboard and 404 pages | Done | `noindex`. |
-| Canonical links | Ready, needs domain | Added once `siteUrl` is set. |
+| Canonical links | Done | Point to the workers.dev address until a custom domain is set. |
 | Google Search Console | To do | Verify, submit sitemap. |
 | Bing Webmaster Tools | To do | Import from Search Console. |
 | Google Business Profile (constituency office) | To do | Needs the office address and phone. |
 
 ## Settings (site.config.js)
 
-- `siteUrl`: the live address, e.g. `https://www.example.co.ke` (no slash at the end). **Not set yet.**
+- `siteUrl`: `https://gg-kagombe.spencetechandlogistics.workers.dev` (change it when a custom domain is added, then rebuild).
 - `seo.googleSiteVerification`: from Search Console, HTML-tag method (the `content` value only).
 - `seo.bingSiteVerification`: from Bing Webmaster Tools.
 
@@ -49,7 +49,7 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 
 ## Next steps
 
-1. Set `siteUrl` once the domain is known, rebuild, deploy.
+1. ~~Set `siteUrl`~~ Done (workers.dev address). If a custom domain is added later, change `siteUrl` and rebuild.
 2. Search Console: add the property, verify with the HTML tag, submit `/sitemap.xml`, request indexing for the home page.
 3. Link the site from his Facebook, Instagram, X and LinkedIn bios and from the Parliament / Mzalendo profiles where possible. These links are the strongest early signals.
 4. Add the constituency office address and phone (Contact) and create a Google Business Profile for the office.
@@ -57,6 +57,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 6. Keep adding events and projects with photos and real dates; each one is a new page that can rank for local searches.
 
 ## Change log
+
+- **2 Nov 2026**: `siteUrl` set to the live workers.dev address: sitemap.xml (with images), canonical links and full share-image addresses now generated.
 
 - **2 Nov 2026**: Parliament page description no longer mentions votes (voting bar and Finance Bill votes removed from the site).
 
