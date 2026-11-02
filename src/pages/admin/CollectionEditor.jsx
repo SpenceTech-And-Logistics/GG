@@ -47,6 +47,42 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     refresh()
   }
 
+  // Items listed more than once (same title, or same title and organisation for positions).
+  const dupKey = (d) => String((importer?.key || ((x) => x.title))(d) || '').replace(/\s+/g, ' ').trim().toLowerCase()
+  const dupGroups = items
+    ? Object.values(items.reduce((acc, it) => ((acc[dupKey(it)] ||= []).push(it), acc), {})).filter((g) => g.length > 1 && dupKey(g[0]))
+    : []
+  const extraCount = dupGroups.reduce((n, g) => n + g.length - 1, 0)
+
+  /** Keep one of each duplicate (the built-in copy, else the one with the most photos, else the oldest) and remove the rest. */
+  async function removeDuplicates() {
+    setBusy(true)
+    setMsg(null)
+    try {
+      const { fs, db } = await getDb()
+      const score = (it) => (it.builtinKey ? 1000 : 0) + (it.photos || []).length * 10 + (it.cover ? 5 : 0) + (it.description || it.summary || '').length / 1000
+      let removed = 0
+      for (const group of dupGroups) {
+        const sorted = [...group].sort((a, b) => score(b) - score(a) || (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0))
+        const [keep, ...extra] = sorted
+        for (const it of extra) {
+          // Photos imported for a duplicate move to the copy that stays.
+          if (linked) {
+            const snap = await fs.getDocs(fs.query(fs.collection(db, 'gallery'), fs.where('linkId', '==', it.id)))
+            for (const d of snap.docs) await fs.updateDoc(d.ref, { linkId: keep.id })
+          }
+          await fs.deleteDoc(fs.doc(db, coll, it.id))
+          removed++
+        }
+      }
+      await reload()
+      setMsg({ text: `Removed ${removed} duplicate${removed === 1 ? '' : 's'}. One copy of each is kept${linked ? ', with all its photos' : ''}.` })
+    } catch (ex) {
+      setMsg({ bad: true, text: ex.message })
+    }
+    setBusy(false)
+  }
+
   // Built-in items the dashboard does not have yet.
   const missing = builtins && items ? builtins.filter((b) => !items.some((i) => i.id === b.id)) : []
 
@@ -127,7 +163,8 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       const records = await readRecords(file)
       const keyOf = importer.key || ((d) => d.title)
       const norm = (d) => String(keyOf(d) || '').trim().toLowerCase()
-      const seen = new Set((items || []).map(norm))
+      // Built-in items are copied in before the first import, so treat them as already listed too.
+      const seen = new Set([...(items || []), ...(builtins && items?.length === 0 ? builtins : [])].map(norm))
       const fresh = []
       let skipped = 0
       for (const r of records) {
@@ -174,6 +211,16 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       </div>
 
       {msg && <p className={msg.bad ? 'adm-alert' : 'adm-ok'} role="status">{msg.text}</p>}
+
+      {extraCount > 0 && (
+        <div className="adm-banner">
+          <p>
+            <b>{extraCount} duplicate{extraCount === 1 ? '' : 's'}</b> found: {dupGroups.map((g) => `${g[0].title} (×${g.length})`).join(', ')}.
+            Removing keeps one copy of each{linked ? ' and moves any photos to it' : ''}.
+          </p>
+          <button type="button" className="adm-btn" onClick={removeDuplicates} disabled={busy}>Remove duplicates</button>
+        </div>
+      )}
 
       {missing.length > 0 && (
         <div className="adm-banner">

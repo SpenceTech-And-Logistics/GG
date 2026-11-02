@@ -322,3 +322,6 @@ label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-w
 
 /* sections reached by a link like /about#positions stop below the sticky header */
 section[id] { scroll-margin-top: 110px; }
+
+/* question rows: status and link on the right */
+.q-side { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; justify-content: flex-end; }

@@ -111,11 +111,12 @@ export default function Home() {
         </div>
       </section>
 
+      {(parliament.bills || []).length > 0 && (
       <section className="wrap section">
         <Reveal className="section-head">
           <div>
             <span className="eyebrow">Legislation</span>
-            <h2 className="title">Bills and votes</h2>
+            <h2 className="title">Bills</h2>
           </div>
           <Link to="/parliament" className="link-arrow">All parliamentary work <span>→</span></Link>
         </Reveal>
@@ -128,6 +129,7 @@ export default function Home() {
           ))}
         </Reveal>
       </section>
+      )}
 
       {projects.length > 0 && (
         <section className="wrap section-tight">

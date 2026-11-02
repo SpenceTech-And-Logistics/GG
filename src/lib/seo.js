@@ -73,7 +73,7 @@ const STATIC = {
     title: `Parliamentary record | ${SHORT}`,
     heading: 'Record in the National Assembly',
     description: clip(
-      `Hon. Gabriel Kagombe in the ${c.profile?.parliament || '13th Parliament'}: ${list((c.parliament?.committees || []).map((x) => `${x.name} Committee`), 3)}, Bills, votes, motions and questions to Cabinet Secretaries.`,
+      `Hon. Gabriel Kagombe in the ${c.profile?.parliament || '13th Parliament'}: ${list((c.parliament?.committees || []).map((x) => `${x.name} Committee`), 3)}, Bills, motions and questions to Cabinet Secretaries.`,
     ),
   }),
   '/projects': (c) => ({

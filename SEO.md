@@ -58,6 +58,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 
 ## Change log
 
+- **2 Nov 2026**: Parliament page description no longer mentions votes (voting bar and Finance Bill votes removed from the site).
+
 - **2 Nov 2026**: Site name changed to “Hon. GG Kagombe” (titles, share image, structured data `name`). “Gabriel Gathuka Kagombe” kept only as a hidden `alternateName` so searches for the full name still find the site.
 
 - **2 Nov 2026**: Positions moved into the About page (section `#positions`); the separate Positions page and its search entry were removed, and `/positions` redirects to `/about#positions`. 43 pages, no warnings.

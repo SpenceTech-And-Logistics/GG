@@ -53,8 +53,6 @@ export const defaults = {
     timeline: [
       { when: 'August 2026', title: 'Joined the Democracy for Citizens Party', detail: 'Announced his departure from UDA on 11 August 2026, according to press reports.' },
       { when: '2022', title: 'Elected Member of Parliament for Gatundu South', detail: '17,815 votes on a United Democratic Alliance ticket (IEBC Gazette Notice 9950). Sworn in to the 13th Parliament.' },
-      { when: 'Current', title: 'Boards and directorships', detail: 'Chairman, Highlands Power Company. Board member, Biashara Fund, Kiambu County. Director, Theta Tea Factory and Ndarugu Tea Factory.' },
-      { when: 'Current', title: 'Chairman, Board of Management', detail: 'Mutunguru Primary School.' },
     ],
     education: [
       { when: '2004 to 2008', title: 'Bachelor of Arts, Economics and Communication', detail: 'University of Nairobi' },
@@ -68,20 +66,17 @@ export const defaults = {
       { value: 4, label: 'Questions' },
       { value: 1, label: 'Statement requests' },
       { value: 25, label: 'Committee reports' },
-      { value: 6, label: 'Recorded votes' },
     ],
-    votes: { aye: 4, no: 0, absent: 2 },
+    // Left at zero so the voting bar stays hidden; fill in from the dashboard to show it.
+    votes: { aye: 0, no: 0, absent: 0 },
     committees: [
       { name: 'Agriculture and Livestock', role: 'Member', note: 'Reports include the tea pricing inquiry, the Plant Protection Bill and the Coffee Bill.' },
       { name: 'Public Accounts', role: 'Member', note: '' },
     ],
     bills: [
-      { title: 'The Finance Bill, 2023 (Second Reading)', year: '2023', status: 'Voted Aye' },
-      { title: 'The Finance Bill, 2024 (Second Reading)', year: '2024', status: 'Voted Aye' },
-      { title: 'The Finance Bill, 2024 (Committee of the Whole report)', year: '2024', status: 'Voted Aye' },
       { title: 'The Constitution of Kenya (Amendment) Bill, 2025', year: '2025', status: 'Absent' },
     ],
-    billsNote: 'Mzalendo records no Bills sponsored by the Member in the 13th Parliament so far. This table lists the Bill votes it records.',
+    billsNote: 'Mzalendo records no Bills sponsored by the Member in the 13th Parliament so far.',
     motions: [
       { date: '25 Apr 2023', title: 'Appointment of an external auditor for the Auditor-General’s Office', outcome: 'Moved and seconded' },
       { date: '2 Mar 2023', title: 'Extension of time for the Budget Policy Statement', outcome: 'Adopted' },
@@ -89,10 +84,10 @@ export const defaults = {
       { date: '1 Dec 2022', title: 'Agriculture Committee report on the vetting of Principal Secretary nominees', outcome: 'Adopted' },
     ],
     questions: [
-      { date: '10 Aug 2023', title: 'Delayed NYS disbursement of Ksh 2 billion', to: 'Treasury CS', status: 'Pending' },
-      { date: '26 Jun 2023', title: 'Safaricom and VoIP operators', to: 'ICT CS', status: 'Pending' },
-      { date: '7 Jun 2023', title: 'Autism and equal access to education', to: 'Education CS', status: 'Deferred' },
-      { date: '', title: 'Recruitment bonds for migrant workers', to: 'Labour CS', status: 'Pending' },
+      { date: '10 Aug 2023', title: 'Delayed NYS disbursement of Ksh 2 billion', to: 'Treasury CS', status: 'Pending', url: 'https://mzalendo.com/mps-performance/national-assembly/13th-parliament/kagombe-gabriel-gathuka/' },
+      { date: '26 Jun 2023', title: 'Safaricom and VoIP operators', to: 'ICT CS', status: 'Pending', url: 'https://mzalendo.com/legislative-trends/questions/589/' },
+      { date: '7 Jun 2023', title: 'Autism and equal access to education', to: 'Education CS', status: 'Deferred', url: 'https://mzalendo.com/mps-performance/national-assembly/13th-parliament/kagombe-gabriel-gathuka/' },
+      { date: '', title: 'Recruitment bonds for migrant workers', to: 'Labour CS', status: 'Pending', url: 'https://mzalendo.com/mps-performance/national-assembly/13th-parliament/kagombe-gabriel-gathuka/' },
     ],
     source: 'Figures from Mzalendo (13th Parliament) and the Parliament of Kenya. The office updates them from the dashboard.',
   },

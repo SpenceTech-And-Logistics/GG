@@ -51,12 +51,12 @@ export const profileFields = [
 
 export const parliamentFields = [
   { key: 'stats', label: 'Figures', type: 'list', noun: 'figure', wide: true, fields: [{ key: 'value', label: 'Number', type: 'number' }, { key: 'label', label: 'Label' }] },
-  { key: 'votes', label: 'Votes', type: 'group', wide: true, fields: [{ key: 'aye', label: 'Aye', type: 'number' }, { key: 'no', label: 'No', type: 'number' }, { key: 'absent', label: 'Absent', type: 'number' }] },
+  { key: 'votes', label: 'Votes (the voting bar shows only when these add up to more than 0)', type: 'group', wide: true, fields: [{ key: 'aye', label: 'Aye', type: 'number' }, { key: 'no', label: 'No', type: 'number' }, { key: 'absent', label: 'Absent', type: 'number' }] },
   { key: 'committees', label: 'Committees and caucuses', type: 'list', noun: 'committee', wide: true, fields: [{ key: 'name', label: 'Name' }, { key: 'role', label: 'Role' }, { key: 'note', label: 'Note' }] },
   { key: 'bills', label: 'Bills', type: 'list', noun: 'Bill', wide: true, fields: [{ key: 'title', label: 'Bill' }, { key: 'year', label: 'Year' }, { key: 'status', label: 'Status (blank = to be confirmed)' }] },
   { key: 'billsNote', label: 'Note under the Bills table', type: 'textarea', wide: true },
   { key: 'motions', label: 'Recent motions', type: 'list', noun: 'motion', wide: true, fields: [{ key: 'date', label: 'Date' }, { key: 'title', label: 'Motion' }, { key: 'outcome', label: 'Outcome' }] },
-  { key: 'questions', label: 'Questions to Cabinet Secretaries', type: 'list', noun: 'question', wide: true, fields: [{ key: 'date', label: 'Date' }, { key: 'title', label: 'Question' }, { key: 'to', label: 'Asked of (e.g. Treasury CS)' }, { key: 'status', label: 'Status' }] },
+  { key: 'questions', label: 'Questions to Cabinet Secretaries', type: 'list', noun: 'question', wide: true, fields: [{ key: 'date', label: 'Date' }, { key: 'title', label: 'Question' }, { key: 'to', label: 'Asked of (e.g. Treasury CS)' }, { key: 'status', label: 'Status' }, { key: 'url', label: 'Link (Mzalendo, Hansard or news)', type: 'url' }] },
   { key: 'source', label: 'Source note', wide: true },
 ]
 

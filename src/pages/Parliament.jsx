@@ -4,7 +4,9 @@ import { useContent } from '../lib/useContent.js'
 
 export default function Parliament() {
   const { parliament: p } = useContent()
-  const total = (p.votes.aye || 0) + (p.votes.no || 0) + (p.votes.absent || 0) || 1
+  const votes = p.votes || {}
+  const counted = (Number(votes.aye) || 0) + (Number(votes.no) || 0) + (Number(votes.absent) || 0)
+  const total = counted || 1
   const pct = (n) => `${((n || 0) / total) * 100}%`
 
   return (
@@ -12,7 +14,7 @@ export default function Parliament() {
       <PageHead
         eyebrow="Parliament"
         title="The record in the National Assembly"
-        lead="Committees, Bills, motions and votes and questions of the Member for Gatundu South in the 13th Parliament."
+        lead="Committees, Bills, motions and questions of the Member for Gatundu South in the 13th Parliament."
       />
 
       <section className="wrap section-tight">
@@ -39,9 +41,10 @@ export default function Parliament() {
         </div>
       </section>
 
+      {((p.bills || []).length > 0 || p.billsNote) && (
       <section className="wrap section-tight">
-        <Reveal><span className="eyebrow">Legislation</span><h2 className="title" style={{ marginBottom: 28 }}>Bills and votes</h2></Reveal>
-        {p.bills.length > 0 && <Reveal className="table-wrap">
+        <Reveal><span className="eyebrow">Legislation</span><h2 className="title" style={{ marginBottom: 28 }}>Bills</h2></Reveal>
+        {(p.bills || []).length > 0 && <Reveal className="table-wrap">
           <table>
             <thead><tr><th>Bill</th><th>Year</th><th>Status</th></tr></thead>
             <tbody>
@@ -57,6 +60,7 @@ export default function Parliament() {
         </Reveal>}
         {p.billsNote && <p className="note">{p.billsNote}</p>}
       </section>
+      )}
 
       {(p.questions || []).length > 0 && (
         <section className="wrap section-tight">
@@ -68,7 +72,14 @@ export default function Parliament() {
                   <span className="meta">{[x.date, x.to].filter(Boolean).join(' · ')}</span>
                   <h3 style={{ fontSize: 20, marginTop: 4 }}>{x.title}</h3>
                 </div>
-                {x.status && <span className="pill">{x.status}</span>}
+                <div className="q-side">
+                  {x.status && <span className="pill">{x.status}</span>}
+                  {x.url && (
+                    <a href={x.url} target="_blank" rel="noreferrer" className="link-arrow">
+                      {/mzalendo\.com\/legislative-trends\/questions/.test(x.url) ? 'Read the question' : /mzalendo/.test(x.url) ? 'On Mzalendo' : 'Read more'} <span>→</span>
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </Reveal>
@@ -76,21 +87,23 @@ export default function Parliament() {
       )}
 
       <section className="wrap section">
-        <div className="split" style={{ alignItems: 'start' }}>
+        <div className={counted ? 'split' : ''} style={{ alignItems: 'start' }}>
+          {counted > 0 && (
           <Reveal variant="left">
             <span className="eyebrow">Voting</span>
             <h2 className="title" style={{ marginBottom: 24 }}>How he has voted</h2>
             <Reveal className="votebar" variant="scale" aria-label="Voting record">
-              <i className="a" style={{ '--w': pct(p.votes.aye) }} />
-              <i className="n" style={{ '--w': pct(p.votes.no) }} />
-              <i className="x" style={{ '--w': pct(p.votes.absent) }} />
+              <i className="a" style={{ '--w': pct(votes.aye) }} />
+              <i className="n" style={{ '--w': pct(votes.no) }} />
+              <i className="x" style={{ '--w': pct(votes.absent) }} />
             </Reveal>
             <div className="legend">
-              <span><b>{p.votes.aye}</b> Aye</span>
-              <span><b>{p.votes.no}</b> No</span>
-              <span><b>{p.votes.absent}</b> Absent</span>
+              <span><b>{votes.aye || 0}</b> Aye</span>
+              <span><b>{votes.no || 0}</b> No</span>
+              <span><b>{votes.absent || 0}</b> Absent</span>
             </div>
           </Reveal>
+          )}
           <Reveal variant="right">
             <span className="eyebrow">Recent motions</span>
             <h2 className="title" style={{ marginBottom: 24 }}>In the House</h2>
