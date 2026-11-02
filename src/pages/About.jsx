@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import PageHead from '../components/PageHead.jsx'
 import Portrait from '../components/Portrait.jsx'
+import PositionsSection from '../components/PositionsSection.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { useContent } from '../lib/useContent.js'
 
@@ -27,6 +28,8 @@ export default function About() {
           <div><small>Parliament</small><b>{profile.parliament}</b></div>
         </Reveal>
       </section>
+
+      <PositionsSection />
 
       <section className="wrap section">
         <Reveal><span className="eyebrow">Career</span><h2 className="title" style={{ marginBottom: 32 }}>Public service and profession</h2></Reveal>

@@ -2,7 +2,7 @@
 
 Multi-page React + Vite site for the Member of Parliament for Gatundu South, with a Firebase admin dashboard at `/admin`.
 
-Pages: Home, About, Parliament, Positions, Projects (with detail pages), **Events** (with detail pages), News, Gallery, Contact. Dashboard sections: Profile and career, Parliament record (including questions), Positions, Projects, Events, **Photo import**, News and press, Gallery, Messages, Contact and social links.
+Pages: Home, About (with the Positions section; `/positions` redirects there), Parliament, Projects (with detail pages), **Events** (with detail pages), News, Gallery, Contact. Dashboard sections: Profile and career, Parliament record (including questions), Positions, Projects, Events, **Photo import**, News and press, Gallery, Messages, Contact and social links.
 Built by SpenceTec and Logistics Limited.
 
 ## Run locally

@@ -1,7 +1,7 @@
 # SEO tracker: Hon. Gabriel Gathuka Kagombe website
 
 Living record of the site's search setup. Updated whenever pages, content or settings change.
-Last updated: 30 October 2026.
+Last updated: 2 November 2026.
 
 ## Status at a glance
 
@@ -9,9 +9,9 @@ Last updated: 30 October 2026.
 |---|---|---|
 | Page titles and descriptions | Done | Every page, generated from the content (`src/lib/seo.js`). |
 | Link previews (WhatsApp, Facebook, X) | Done, needs domain | Share image per page; the full image address needs `siteUrl`. |
-| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (44 pages). |
+| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (43 pages). |
 | Structured data (schema.org) | Done | Person + WebSite (home), Person (About), Event (dated events), breadcrumbs (all inner pages). |
-| sitemap.xml with images | Ready, needs domain | Written at build time once `siteUrl` is set: 44 pages, 157 photos. |
+| sitemap.xml with images | Ready, needs domain | Written at build time once `siteUrl` is set: 43 pages, 157 photos. |
 | robots.txt | Done | `/admin` blocked; sitemap line added once `siteUrl` is set. |
 | Dashboard and 404 pages | Done | `noindex`. |
 | Canonical links | Ready, needs domain | Added once `siteUrl` is set. |
@@ -57,5 +57,7 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 6. Keep adding events and projects with photos and real dates; each one is a new page that can rank for local searches.
 
 ## Change log
+
+- **2 Nov 2026**: Positions moved into the About page (section `#positions`); the separate Positions page and its search entry were removed, and `/positions` redirects to `/about#positions`. 43 pages, no warnings.
 
 - **30 Oct 2026**: SEO set up: per-page titles and descriptions, share tags, structured data, prerendered pages, sitemap with images, robots.txt, default share image, `seoTitle` field in the dashboard for Projects and Events. 44 pages, no warnings.

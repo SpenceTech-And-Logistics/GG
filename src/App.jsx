@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react'
-import { Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Footer from './components/Footer.jsx'
 import Navbar from './components/Navbar.jsx'
 import { useScroll } from './lib/hooks.js'
@@ -13,7 +13,6 @@ import Home from './pages/Home.jsx'
 import News from './pages/News.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Parliament from './pages/Parliament.jsx'
-import Positions from './pages/Positions.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import Projects from './pages/Projects.jsx'
 
@@ -21,13 +20,19 @@ import Projects from './pages/Projects.jsx'
 const AdminApp = lazy(() => import('./pages/admin/AdminApp.jsx'))
 
 function Layout() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const bar = useRef(null)
 
   useSeo()
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
+    // Open at the top, or at a section when the address has one (e.g. /about#positions).
+    if (!hash) {
+      window.scrollTo(0, 0)
+      return undefined
+    }
+    const t = setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120)
+    return () => clearTimeout(t)
+  }, [pathname, hash])
 
   useScroll((y) => {
     const max = document.documentElement.scrollHeight - window.innerHeight
@@ -54,7 +59,8 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="parliament" element={<Parliament />} />
-        <Route path="positions" element={<Positions />} />
+        {/* Positions now live on the About page; old links still work. */}
+        <Route path="positions" element={<Navigate to="/about#positions" replace />} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="events" element={<Events />} />

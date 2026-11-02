@@ -151,7 +151,7 @@ export const eventsConfig = {
 export const positionsConfig = {
   coll: 'positions',
   title: 'Positions',
-  blurb: 'Seats, boards, directorships and community roles, shown on the Positions page. Lower numbers appear first.',
+  blurb: 'Seats, boards, directorships and community roles, shown in the Positions section of the About page. Lower numbers appear first.',
   noun: 'Position',
   empty: { title: '', organisation: '', category: POSITION_CATEGORIES[0], period: '', description: '', order: 50, status: 'published' },
   fields: [

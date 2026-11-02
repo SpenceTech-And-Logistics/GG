@@ -317,3 +317,6 @@ label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-w
 
 /* lightbox link back to the event or project */
 .lightbox figcaption a { color: #fff; text-decoration: underline; text-underline-offset: 3px; margin-left: 8px; white-space: nowrap; }
+
+/* sections reached by a link like /about#positions stop below the sticky header */
+section[id] { scroll-margin-top: 110px; }

@@ -94,7 +94,7 @@ export default function Home() {
             <span className="eyebrow">Positions</span>
             <h2 className="title">Where he serves</h2>
           </div>
-          <Link to="/positions" className="link-arrow">All positions <span>→</span></Link>
+          <Link to="/about#positions" className="link-arrow">All positions <span>→</span></Link>
         </Reveal>
         <div className="grid grid-4">
           {positions.slice(0, 4).map((p, i) => (

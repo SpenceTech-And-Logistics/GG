@@ -66,6 +66,7 @@ const STATIC = {
     title: `About | ${SHORT}`,
     heading: 'About Hon. Gabriel Gathuka Kagombe',
     description: clip(c.profile?.bio?.[0] || DEFAULT_DESC),
+    // Positions are shown on this page too.
   }),
   '/parliament': (c) => ({
     title: `Parliamentary record | ${SHORT}`,
@@ -73,11 +74,6 @@ const STATIC = {
     description: clip(
       `Hon. Gabriel Kagombe in the ${c.profile?.parliament || '13th Parliament'}: ${list((c.parliament?.committees || []).map((x) => `${x.name} Committee`), 3)}, Bills, votes, motions and questions to Cabinet Secretaries.`,
     ),
-  }),
-  '/positions': (c) => ({
-    title: `Positions and roles | ${SHORT}`,
-    heading: 'Positions and roles',
-    description: clip(`Offices and roles held by Hon. Gabriel Kagombe: ${list((c.positions || []).map((p) => p.organisation && p.title ? `${p.title.replace(/^Member, /, '')}${p.organisation.includes('National Assembly') ? '' : `, ${p.organisation}`}` : p.title), 4)}.`),
   }),
   '/projects': (c) => ({
     title: `Projects in Gatundu South | ${SHORT}`,
