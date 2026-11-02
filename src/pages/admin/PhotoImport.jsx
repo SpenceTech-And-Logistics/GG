@@ -43,11 +43,23 @@ async function collect(fileList) {
   return out
 }
 
+const denied = (e) => /permission|insufficient/i.test(e?.message || e?.code || '')
+
+/** Events and projects from the dashboard. One list failing (e.g. rules not yet published) does not stop the other. */
 async function fetchRemote() {
   const { fs, db } = await getDb()
-  const [ev, pr] = await Promise.all(['events', 'projects'].map((c) => fs.getDocs(fs.collection(db, c))))
+  const blocked = []
+  const [ev, pr] = await Promise.all(
+    ['events', 'projects'].map((c) =>
+      fs.getDocs(fs.collection(db, c)).catch((e) => {
+        if (!denied(e)) throw e
+        blocked.push(c)
+        return { docs: [] }
+      }),
+    ),
+  )
   const list = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }))
-  return { events: list(ev), projects: list(pr) }
+  return { events: list(ev), projects: list(pr), blocked }
 }
 
 export default function PhotoImport() {
@@ -72,7 +84,11 @@ export default function PhotoImport() {
   useEffect(() => {
     let alive = true
     fetchRemote()
-      .then((next) => alive && setRemote(next))
+      .then((next) => {
+        if (!alive) return
+        setRemote(next)
+        if (next.blocked.length) setMsg({ bad: true, text: `Could not read ${next.blocked.join(' and ')}. Firebase is blocking this list. In the Firebase console open Firestore Database → Rules, paste the contents of firestore.rules from the project and click Publish.` })
+      })
       .catch((e) => alive && setMsg({ bad: true, text: `Could not load events and projects: ${e.message}` }))
     const urls = thumbs.current
     return () => {

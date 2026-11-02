@@ -31,7 +31,11 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     let alive = true
     load()
       .then((list) => alive && setItems(list))
-      .catch((e) => alive && (setItems([]), setMsg({ bad: true, text: `Could not load: ${e.message}` })))
+      .catch((e) => {
+        if (!alive) return
+        setItems([])
+        setMsg({ bad: true, text: /permission|insufficient/i.test(e.message) ? 'Firebase is blocking this list. In the Firebase console open Firestore Database → Rules, paste the contents of firestore.rules from the project and click Publish.' : `Could not load: ${e.message}` })
+      })
     return () => {
       alive = false
     }
