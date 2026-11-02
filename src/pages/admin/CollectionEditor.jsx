@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getDb } from '../../lib/firebase.js'
 import { csvTemplate, readRecords, saveText } from '../../lib/importer.js'
-import { forgetPhotoCache } from '../../lib/photos.js'
+import { bundledPhotos, forgetPhotoCache } from '../../lib/photos.js'
 import { copyBuiltins, deleteLinkedPhotos } from './builtins.js'
+import { findDuplicates, matchesFor, suggestKeep } from './duplicates.js'
 import { useContent } from '../../lib/useContent.js'
 import { Field } from './Fields.jsx'
 
@@ -18,6 +19,16 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   const [form, setForm] = useState(empty)
   const [msg, setMsg] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [dupOpen, setDupOpen] = useState(false)
+  const [keepIds, setKeepIds] = useState({}) // group index -> id to keep
+  const [dupWarn, setDupWarn] = useState(null) // matches found while saving
+  const [ignored, setIgnored] = useState(() => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem(`gg-not-duplicates-${coll}`) || '[]'))
+    } catch {
+      return new Set()
+    }
+  })
   const [confirm, setConfirm] = useState('')
   const fileRef = useRef(null)
 
@@ -47,40 +58,68 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     refresh()
   }
 
-  // Items listed more than once (same title, or same title and organisation for positions).
-  const dupKey = (d) => String((importer?.key || ((x) => x.title))(d) || '').replace(/\s+/g, ' ').trim().toLowerCase()
-  const dupGroups = items
-    ? Object.values(items.reduce((acc, it) => ((acc[dupKey(it)] ||= []).push(it), acc), {})).filter((g) => g.length > 1 && dupKey(g[0]))
-    : []
-  const extraCount = dupGroups.reduce((n, g) => n + g.length - 1, 0)
+  // Possible duplicates: the same title, or titles that are nearly the same (positions compare title and organisation).
+  const keyOf = importer?.key || ((x) => x.title)
+  const dupGroups = items ? findDuplicates(items, keyOf, ignored) : []
+  const flagged = new Set(dupGroups.flatMap((g) => g.items.map((it) => it.id)))
+  const extraCount = dupGroups.reduce((n, g) => n + g.items.length - 1, 0)
 
-  /** Keep one of each duplicate (the built-in copy, else the one with the most photos, else the oldest) and remove the rest. */
-  async function removeDuplicates() {
+  /** What tells copies apart in the review: dates, place, photos, when added. */
+  const describe = (it) => {
+    const photos = bundledPhotos(coll, it).length + (it.photos || []).length
+    const added = it.createdAt?.seconds ? new Date(it.createdAt.seconds * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
+    return [
+      it.year || it.date || it.period,
+      it.ward || it.venue || it.organisation || it.outlet,
+      it.category,
+      it.progress,
+      `${photos} photo${photos === 1 ? '' : 's'}`,
+      it.builtinKey ? 'built-in copy' : '',
+      added && `added ${added}`,
+      it.status === 'draft' ? 'draft' : '',
+    ].filter(Boolean).join(' · ')
+  }
+
+  /** Remove the other copies in one group, moving any imported photos to the copy that stays. */
+  async function resolveGroup(group, keepId) {
     setBusy(true)
     setMsg(null)
     try {
       const { fs, db } = await getDb()
-      const score = (it) => (it.builtinKey ? 1000 : 0) + (it.photos || []).length * 10 + (it.cover ? 5 : 0) + (it.description || it.summary || '').length / 1000
-      let removed = 0
-      for (const group of dupGroups) {
-        const sorted = [...group].sort((a, b) => score(b) - score(a) || (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0))
-        const [keep, ...extra] = sorted
-        for (const it of extra) {
-          // Photos imported for a duplicate move to the copy that stays.
-          if (linked) {
-            const snap = await fs.getDocs(fs.query(fs.collection(db, 'gallery'), fs.where('linkId', '==', it.id)))
-            for (const d of snap.docs) await fs.updateDoc(d.ref, { linkId: keep.id })
-          }
-          await fs.deleteDoc(fs.doc(db, coll, it.id))
-          removed++
+      const keep = group.items.find((it) => it.id === keepId) || suggestKeep(group.items)
+      const extra = group.items.filter((it) => it.id !== keep.id)
+      for (const it of extra) {
+        if (linked) {
+          const snap = await fs.getDocs(fs.query(fs.collection(db, 'gallery'), fs.where('linkId', '==', it.id)))
+          for (const d of snap.docs) await fs.updateDoc(d.ref, { linkId: keep.id })
         }
+        await fs.deleteDoc(fs.doc(db, coll, it.id))
       }
+      setKeepIds({})
       await reload()
-      setMsg({ text: `Removed ${removed} duplicate${removed === 1 ? '' : 's'}. One copy of each is kept${linked ? ', with all its photos' : ''}.` })
+      setMsg({ text: `Kept “${keep.title}” and removed ${extra.length} other cop${extra.length === 1 ? 'y' : 'ies'}${linked ? '. Their photos moved to the copy that stays' : ''}.` })
     } catch (ex) {
       setMsg({ bad: true, text: ex.message })
     }
     setBusy(false)
+  }
+
+  /** Mark a group as different items so it is not flagged again (remembered on this computer). */
+  function notDuplicates(group) {
+    const next = new Set(ignored)
+    for (const a of group.items) for (const b of group.items) if (a.id < b.id) next.add(`${a.id}|${b.id}`)
+    setIgnored(next)
+    setKeepIds({})
+    try {
+      localStorage.setItem(`gg-not-duplicates-${coll}`, JSON.stringify([...next]))
+    } catch {
+      /* not remembered after reload; fine */
+    }
+  }
+
+  function checkDuplicates() {
+    setDupOpen(true)
+    if (!dupGroups.length) setMsg({ text: `Checked ${items?.length || 0} ${title.toLowerCase()}: no duplicates found.` })
   }
 
   // Built-in items the dashboard does not have yet.
@@ -107,6 +146,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   function startNew() {
     setForm(empty)
     setEditing('new')
+    setDupWarn(null)
     setMsg(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -115,17 +155,31 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     void id
     setForm({ ...empty, ...rest })
     setEditing(item.id)
+    setDupWarn(null)
     setMsg(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  async function save(e) {
-    e.preventDefault()
+  async function save(e, anyway = false) {
+    e?.preventDefault()
+    const matches = matchesFor(keyOf(form), items, editing === 'new' ? null : editing, keyOf)
+    if (matches.length && !anyway) {
+      setDupWarn(matches)
+      return
+    }
+    setDupWarn(null)
     setBusy(true)
     setMsg(null)
     try {
       const { fs, db } = await getDb()
-      const { createdAt, ...data } = form
+      const { createdAt, ...raw } = form
+      // Typed-in choices (e.g. a category) reuse the existing spelling when they match one, ignoring case and spacing.
+      const data = { ...raw }
+      for (const f of fields.filter((x) => x.type === 'combo')) {
+        const typed = String(data[f.key] || '').replace(/\s+/g, ' ').trim()
+        const known = [...(f.options || []), ...(items || []).map((it) => it[f.key])].find((o) => String(o || '').toLowerCase() === typed.toLowerCase())
+        data[f.key] = known || (typed ? typed[0].toUpperCase() + typed.slice(1) : typed)
+      }
       if (JSON.stringify(data).length > 950000) throw new Error('Too large to save. Remove a photo or two, or use smaller photos.')
       if (editing === 'new') {
         await keepBuiltins()
@@ -206,19 +260,65 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
               <input ref={fileRef} type="file" accept=".csv,.json,text/csv,application/json" hidden onChange={doImport} />
             </>
           )}
+          {items?.length > 1 && (
+            <button type="button" className="adm-btn ghost" onClick={checkDuplicates} disabled={busy}>Check for duplicates</button>
+          )}
           <button type="button" className="adm-btn" onClick={startNew}>Add {noun.toLowerCase()}</button>
         </div>
       </div>
 
       {msg && <p className={msg.bad ? 'adm-alert' : 'adm-ok'} role="status">{msg.text}</p>}
 
-      {extraCount > 0 && (
+      {extraCount > 0 && !dupOpen && (
         <div className="adm-banner">
           <p>
-            <b>{extraCount} duplicate{extraCount === 1 ? '' : 's'}</b> found: {dupGroups.map((g) => `${g[0].title} (×${g.length})`).join(', ')}.
-            Removing keeps one copy of each{linked ? ' and moves any photos to it' : ''}.
+            <b>{dupGroups.length} possible duplicate{dupGroups.length === 1 ? '' : 's'}</b>: {dupGroups.map((g) => `${g.items[0].title} (×${g.items.length})`).join(', ')}.
+            Check them side by side and choose which copy to keep.
           </p>
-          <button type="button" className="adm-btn" onClick={removeDuplicates} disabled={busy}>Remove duplicates</button>
+          <button type="button" className="adm-btn" onClick={() => setDupOpen(true)}>Review duplicates</button>
+        </div>
+      )}
+
+      {dupOpen && (
+        <div className="adm-panel adm-dups">
+          <div className="adm-dups-head">
+            <h2>Duplicate check</h2>
+            <button type="button" className="adm-link" onClick={() => setDupOpen(false)}>Close</button>
+          </div>
+          {dupGroups.length === 0 ? (
+            <p className="adm-ok">No duplicates: every {noun.toLowerCase()} has its own title.</p>
+          ) : (
+            <>
+              <p className="adm-help" style={{ marginTop: 0 }}>
+                Each box is one group that may be the same {noun.toLowerCase()}. Choose the copy to keep (the suggested one is ticked), then remove the others
+                {linked ? '. Photos from the removed copies move to the one you keep' : ''}. If they are different, choose “These are different”.
+              </p>
+              {dupGroups.map((g, gi) => {
+                const keepId = keepIds[gi] || suggestKeep(g.items).id
+                return (
+                  <fieldset className="adm-dup" key={g.items.map((it) => it.id).join('-')}>
+                    <legend>{g.exact ? 'Same title' : 'Similar titles'} · {g.items.length} copies</legend>
+                    {g.items.map((it) => (
+                      <label key={it.id} className={`adm-dup-row ${keepId === it.id ? 'is-keep' : ''}`}>
+                        <input type="radio" name={`keep-${gi}`} checked={keepId === it.id} onChange={() => setKeepIds({ ...keepIds, [gi]: it.id })} />
+                        <span>
+                          <b>{it.title}</b>
+                          <small>{describe(it)}</small>
+                        </span>
+                        <button type="button" className="adm-link" onClick={(e) => { e.preventDefault(); startEdit(it) }}>Open</button>
+                      </label>
+                    ))}
+                    <div className="adm-actions">
+                      <button type="button" className="adm-btn" onClick={() => resolveGroup(g, keepId)} disabled={busy}>
+                        Keep the ticked one, remove {g.items.length - 1}
+                      </button>
+                      <button type="button" className="adm-btn ghost" onClick={() => notDuplicates(g)} disabled={busy}>These are different</button>
+                    </div>
+                  </fieldset>
+                )
+              })}
+            </>
+          )}
         </div>
       )}
 
@@ -237,8 +337,28 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         <form className="adm-panel" onSubmit={save}>
           <h2>{editing === 'new' ? `New ${noun.toLowerCase()}` : `Edit ${noun.toLowerCase()}`}</h2>
           <div className="adm-grid">
-            {fields.filter(visible).map((f) => <Field key={f.key} def={f} value={form[f.key]} onChange={(v) => setForm({ ...form, [f.key]: v })} />)}
+            {fields.filter(visible).map((f) => (
+              <Field
+                key={f.key}
+                def={f}
+                value={form[f.key]}
+                onChange={(v) => setForm({ ...form, [f.key]: v })}
+                suggestions={f.type === 'combo' ? (items || []).map((it) => it[f.key]) : undefined}
+              />
+            ))}
           </div>
+          {dupWarn && (
+            <div className="adm-alert" role="alert">
+              <p style={{ margin: '0 0 8px' }}>
+                This looks like {dupWarn.length === 1 ? 'a' : ''} {noun.toLowerCase()}{dupWarn.length === 1 ? '' : 's'} already in the list: {dupWarn.map((m) => `“${m.title}”`).join(', ')}.
+                Edit that one instead, or save anyway if this is a different {noun.toLowerCase()}.
+              </p>
+              <div className="adm-actions">
+                <button type="button" className="adm-btn" onClick={() => save(null, true)} disabled={busy}>Save anyway</button>
+                <button type="button" className="adm-btn ghost" onClick={() => startEdit(dupWarn[0])}>Edit the existing one</button>
+              </div>
+            </div>
+          )}
           <div className="adm-actions">
             <button className="adm-btn" disabled={busy}>{busy ? 'Saving…' : `Save ${noun.toLowerCase()}`}</button>
             <button type="button" className="adm-btn ghost" onClick={() => setEditing(null)}>Cancel</button>
@@ -257,8 +377,15 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
               <thead><tr>{columns.map((c) => <th key={c.key}>{c.label}</th>)}<th /></tr></thead>
               <tbody>
                 {items.map((it) => (
-                  <tr key={it.id}>
-                    {columns.map((c) => <td key={c.key}>{c.render ? c.render(it) : it[c.key]}</td>)}
+                  <tr key={it.id} className={flagged.has(it.id) ? 'is-dup' : ''}>
+                    {columns.map((c, ci) => (
+                      <td key={c.key}>
+                        {c.render ? c.render(it) : it[c.key]}
+                        {ci === 0 && flagged.has(it.id) && (
+                          <button type="button" className="adm-dup-badge" onClick={() => setDupOpen(true)} title="Open the duplicate check">Possible duplicate</button>
+                        )}
+                      </td>
+                    ))}
                     <td className="r">
                       {confirm === it.id ? (
                         <>

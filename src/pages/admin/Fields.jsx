@@ -44,7 +44,7 @@ export function ImageInput({ value, onChange, multiple = false, max = 6, side = 
   )
 }
 
-export function Field({ def, value, onChange }) {
+export function Field({ def, value, onChange, suggestions }) {
   const { type = 'text', label, options, hint } = def
   const wrap = (control) => (
     <div className={`adm-field ${def.wide ? 'wide' : ''}`}>
@@ -55,6 +55,17 @@ export function Field({ def, value, onChange }) {
   )
 
   if (type === 'textarea') return wrap(<textarea rows={def.rows || 4} value={value ?? ''} onChange={(e) => onChange(e.target.value)} />)
+  // Pick a listed value or type a new one (e.g. a new project category).
+  if (type === 'combo') {
+    const listId = `opts-${def.key}`
+    const opts = [...new Set([...(def.options || []), ...(suggestions || [])].map((o) => String(o || '').trim()).filter(Boolean))]
+    return wrap(
+      <>
+        <input list={listId} value={value ?? ''} onChange={(e) => onChange(e.target.value)} required={def.required} placeholder="Choose or type a new one" autoComplete="off" />
+        <datalist id={listId}>{opts.map((o) => <option key={o} value={o} />)}</datalist>
+      </>,
+    )
+  }
   if (type === 'select')
     return wrap(
       <select value={value ?? ''} onChange={(e) => onChange(e.target.value)}>

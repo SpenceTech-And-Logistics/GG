@@ -13,6 +13,18 @@ function merge(base, over) {
 }
 
 const byOrder = (a, b) => Number(a.order ?? 999) - Number(b.order ?? 999)
+
+/** Visitors never see the same title twice: keep the fuller copy (built-in, more photos) where the dashboard has duplicates. */
+function uniqueByTitle(items) {
+  const key = (it) => String(it.title || '').replace(/\s+/g, ' ').trim().toLowerCase()
+  const rank = (it) => (it.builtinKey ? 100 : 0) + (it.photos || []).length + (it.cover ? 1 : 0)
+  const best = new Map()
+  for (const it of items) {
+    const k = key(it) || it.id
+    if (!best.has(k) || rank(it) > rank(best.get(k))) best.set(k, it)
+  }
+  return items.filter((it) => best.get(key(it) || it.id) === it)
+}
 const byDateDesc = (a, b) => String(b.date || b.year || '').localeCompare(String(a.date || a.year || ''))
 
 export function ContentProvider({ children }) {
@@ -52,9 +64,9 @@ export function ContentProvider({ children }) {
   const value = useMemo(() => {
     const r = remote
     const published = (items) => items.filter((i) => i.status !== 'draft')
-    const projects = r && r.projects.length ? published(r.projects).sort(byDateDesc) : defaults.projects
+    const projects = r && r.projects.length ? uniqueByTitle(published(r.projects)).sort(byDateDesc) : defaults.projects
     const press = r && r.press.length ? published(r.press).sort(byDateDesc) : defaults.press
-    const events = r && r.events.length ? published(r.events).sort(byDateDesc) : defaults.events
+    const events = r && r.events.length ? uniqueByTitle(published(r.events)).sort(byDateDesc) : defaults.events
     const positions = r && r.positions.length ? published(r.positions).sort(byOrder) : defaults.positions
     return {
       positions,

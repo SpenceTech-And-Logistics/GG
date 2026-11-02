@@ -79,7 +79,7 @@ export const projectsConfig = {
   empty: { title: '', category: CATEGORIES[0], year: String(new Date().getFullYear()), progress: 'Completed', ward: '', amount: 0, description: '', source: '', photoKey: '', photos: [], status: 'published' },
   fields: [
     { key: 'title', label: 'Title', required: true, wide: true },
-    { key: 'category', label: 'Category', type: 'select', options: CATEGORIES },
+    { key: 'category', label: 'Category', type: 'combo', options: CATEGORIES, required: true, hint: 'Pick one, or type a new category. New categories appear as filters on the Projects page automatically.' },
     { key: 'year', label: 'Year or financial year', hint: 'e.g. 2026, or 2025/26 for a financial year' },
     { key: 'progress', label: 'Status of works', type: 'select', options: [{ value: '', label: 'Not shown' }, ...PROGRESS] },
     { key: 'ward', label: 'Ward' },
@@ -104,7 +104,8 @@ export const projectsConfig = {
     example: ['Classroom block', 'Education', '2025/26', 'Ongoing', 'Gatundu', '1500000', 'Four new classrooms and desks.', '', 'Classroom block'],
     map: (r) => ({
       title: String(r.title || '').trim(),
-      category: CATEGORIES.includes(r.category) ? r.category : 'Other',
+      // Any category is accepted; matching an existing one ignores case and spacing.
+      category: CATEGORIES.find((c) => c.toLowerCase() === String(r.category || '').trim().toLowerCase()) || String(r.category || '').replace(/\s+/g, ' ').trim() || 'Other',
       year: String(r.year || ''),
       ward: String(r.ward || ''),
       progress: PROGRESS.find((x) => x.toLowerCase() === String(r.progress || r.status || '').trim().toLowerCase()) || '',

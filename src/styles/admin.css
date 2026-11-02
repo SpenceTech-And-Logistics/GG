@@ -91,3 +91,18 @@
 .adm-progress { position: relative; width: 100%; height: 34px; border-radius: 99px; background: #efe9da; overflow: hidden; }
 .adm-progress span { position: absolute; inset: 0 auto 0 0; background: var(--forest); transition: width 0.3s; }
 .adm-progress small { position: relative; display: block; text-align: center; line-height: 34px; font-weight: 600; color: #fff; mix-blend-mode: difference; }
+
+/* duplicate check */
+.adm-dups-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.adm-dups h2 { margin: 0; }
+.adm-dup { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; margin: 16px 0 0; background: #fff; }
+.adm-dup legend { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0 6px; }
+.adm-dup-row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+.adm-dup-row + .adm-dup-row { border-top: 1px solid var(--line); }
+.adm-dup-row.is-keep { background: #e4efe0; }
+.adm-dup-row input { width: auto; }
+.adm-dup-row b { display: block; }
+.adm-dup-row small { display: block; color: var(--muted); margin-top: 2px; }
+.adm-dup .adm-actions { margin-top: 12px; }
+.adm-table tr.is-dup td { background: #fff7e8; }
+.adm-dup-badge { display: inline-block; margin-left: 8px; border: 0; background: #ecd6ad; color: #6a4508; font: 700 11px 'Instrument Sans', sans-serif; padding: 3px 9px; border-radius: 99px; cursor: pointer; vertical-align: middle; }
