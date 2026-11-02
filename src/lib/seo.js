@@ -96,7 +96,7 @@ const STATIC = {
   '/gallery': () => ({
     title: `Photo gallery | ${SHORT}`,
     heading: 'Photos and video from the work',
-    description: 'Photos and video of NG-CDF projects, events and the work of Hon. Gabriel Kagombe in Gatundu South and the National Assembly.',
+    description: 'Photos and video of the work of Hon. GG Kagombe in Gatundu South and the National Assembly, with press coverage.',
   }),
   '/contact': () => ({
     title: `Contact the office | ${SHORT}`,

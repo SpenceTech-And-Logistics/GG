@@ -58,6 +58,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 
 ## Change log
 
+- **2 Nov 2026**: Gallery now shows only standalone photos/videos and press images; project and event photos stay on their own pages (which keep their share images and sitemap image entries).
+
 - **2 Nov 2026**: `siteUrl` set to the live workers.dev address: sitemap.xml (with images), canonical links and full share-image addresses now generated.
 
 - **2 Nov 2026**: Parliament page description no longer mentions votes (voting bar and Finance Bill votes removed from the site).

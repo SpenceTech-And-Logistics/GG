@@ -72,7 +72,7 @@ export const contactFields = [
 export const projectsConfig = {
   coll: 'projects',
   title: 'Projects',
-  blurb: 'What has been done in Gatundu South. Add up to 5 photos here, or use Photo import for many at once. Photos also appear in the Gallery.',
+  blurb: 'What has been done in Gatundu South. Add up to 5 photos here, or use Photo import for many at once. Photos show on the project’s own page.',
   noun: 'Project',
   builtins: defaults.projects,
   linked: true,
@@ -242,7 +242,7 @@ export const pressConfig = {
 export const galleryConfig = {
   coll: 'gallery',
   title: 'Gallery',
-  blurb: 'Standalone photos and videos, plus every photo added with Photo import (marked with the event or project it belongs to). Built-in and project photos appear on the site automatically.',
+  blurb: 'Photos and videos added here appear on the public Gallery page. Photos imported for an event or project are listed here too (marked with what they belong to), but they show only on that event’s or project’s own page.',
   noun: 'Item',
   empty: { type: 'photo', title: '', category: GALLERY_CATEGORIES[0], src: '', url: '', status: 'published' },
   fields: [

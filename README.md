@@ -30,7 +30,7 @@ Once Firebase is connected, anything saved in the dashboard replaces the built-i
 6. Authentication, Settings, Authorized domains: add the live domain and the `*.workers.dev` address.
 7. Redeploy. Open `/admin`.
 
-Multiple photos: a project can hold up to 5 photos and a news story one photo; all of them appear in the Gallery automatically and link back to the project or story. Standalone photos and videos are added under Gallery.
+Photos: project and event photos (built-in, added on the item, or via Photo import) show on that project's or event's own page, not in the Gallery. The Gallery shows standalone photos and videos added under Gallery, plus news-story photos.
 
 Photos are resized in the browser and stored in Firestore (about 100 to 300 KB each). Videos are links (YouTube, Google Drive, Facebook, TikTok).
 Projects, Events, Positions and News support **Import from file** (CSV or JSON; duplicates are skipped). Use the "CSV template" button for the columns.

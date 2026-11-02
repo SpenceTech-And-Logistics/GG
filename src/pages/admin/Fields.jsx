@@ -38,7 +38,7 @@ export function ImageInput({ value, onChange, multiple = false, max = 6, side = 
           </label>
         )}
       </div>
-      {multiple && <small>Up to {max} photos. They are resized automatically and also appear in the Gallery.</small>}
+      {multiple && <small>Up to {max} photos. They are resized automatically.</small>}
       {err && <p className="adm-alert">{err}</p>}
     </div>
   )
