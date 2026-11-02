@@ -8,11 +8,11 @@
  */
 import { siteConfig } from '../../site.config.js'
 
-export const SITE_NAME = 'Hon. Gabriel Gathuka Kagombe'
+export const SITE_NAME = 'Hon. GG Kagombe'
 const SHORT = 'Hon. Kagombe, MP Gatundu South'
 export const DEFAULT_IMAGE = '/og-default.jpg'
 const DEFAULT_DESC =
-  'Official website of Hon. Gabriel Gathuka Kagombe, Member of Parliament for Gatundu South, Kiambu County: profile, parliamentary record, NG-CDF projects, events, news and contact.'
+  'Official website of Hon. GG Kagombe, Member of Parliament for Gatundu South, Kiambu County: profile, parliamentary record, NG-CDF projects, events, news and contact.'
 
 export const siteUrl = () => String(siteConfig.siteUrl || '').replace(/\/+$/, '')
 
@@ -41,9 +41,10 @@ function person(content, image) {
   return {
     '@type': 'Person',
     '@id': absolute('/#person'),
-    name: 'Gabriel Gathuka Kagombe',
+    name: 'GG Kagombe',
     honorificPrefix: 'Hon.',
-    alternateName: ['GG Kagombe', 'Gabriel Kagombe', profile.officialName].filter(Boolean),
+    // Other spellings people search for; not shown on the page.
+    alternateName: ['Gabriel Kagombe', 'Gabriel Gathuka Kagombe', profile.officialName].filter(Boolean),
     jobTitle: profile.title || 'Member of Parliament for Gatundu South',
     description: clip(profile.intro || DEFAULT_DESC, 300),
     memberOf: { '@type': 'GovernmentOrganization', name: 'National Assembly of Kenya', url: 'https://www.parliament.go.ke' },
@@ -64,7 +65,7 @@ const crumbs = (items) => ({
 const STATIC = {
   '/about': (c) => ({
     title: `About | ${SHORT}`,
-    heading: 'About Hon. Gabriel Gathuka Kagombe',
+    heading: 'About Hon. GG Kagombe',
     description: clip(c.profile?.bio?.[0] || DEFAULT_DESC),
     // Positions are shown on this page too.
   }),

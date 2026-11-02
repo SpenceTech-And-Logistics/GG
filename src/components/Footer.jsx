@@ -12,9 +12,9 @@ export default function Footer() {
           <div className="brand brand-light">
             <span className="monogram">GK</span>
             <span className="brand-name">
-              Hon. Gabriel
+              Hon. GG
               <br />
-              Gathuka Kagombe
+              Kagombe
             </span>
           </div>
           <p className="footer-blurb">Member of Parliament for Gatundu South, 13th Parliament of Kenya.</p>
@@ -37,7 +37,7 @@ export default function Footer() {
       </div>
       <div className="footer-bar">
         <div className="wrap footer-bar-in">
-          <span>© Hon. Gabriel Gathuka Kagombe, MP for Gatundu South</span>
+          <span>© Hon. GG Kagombe, MP for Gatundu South</span>
           <span>Built by SpenceTec and Logistics Limited</span>
         </div>
       </div>

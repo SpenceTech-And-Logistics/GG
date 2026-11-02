@@ -22,12 +22,12 @@ export default function Navbar() {
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
       <div className="wrap site-header-in">
-        <Link to="/" className="brand" onClick={close} aria-label="Hon. Gabriel Gathuka Kagombe, home">
+        <Link to="/" className="brand" onClick={close} aria-label="Hon. GG Kagombe, home">
           <span className="monogram">GK</span>
           <span className="brand-name">
-            Hon. Gabriel
+            Hon. GG
             <br />
-            Gathuka Kagombe
+            Kagombe
           </span>
         </Link>
         <nav className="nav" id="main-nav" aria-label="Main">

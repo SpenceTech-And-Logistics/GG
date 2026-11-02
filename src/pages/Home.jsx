@@ -25,7 +25,7 @@ export default function Home() {
         <div>
           <span className="eyebrow rise" style={{ '--d': '0ms' }}>Member of Parliament · Gatundu South</span>
           <h1 className="rise" style={{ '--d': '100ms' }}>
-            Hon. Gabriel <em>Gathuka</em> Kagombe
+            Hon. <em>GG</em> Kagombe
           </h1>
           <p className="lead rise" style={{ '--d': '220ms' }}>{profile.intro}</p>
           <div className="hero-actions rise" style={{ '--d': '340ms' }}>

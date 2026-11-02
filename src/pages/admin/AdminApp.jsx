@@ -89,7 +89,7 @@ export default function AdminApp() {
 
   useEffect(() => {
     if (!firebaseReady) return
-    document.title = 'Dashboard | Hon. Gabriel Gathuka Kagombe'
+    document.title = 'Dashboard | Hon. GG Kagombe'
     let robots = document.head.querySelector('meta[name="robots"]')
     if (!robots) document.head.appendChild((robots = Object.assign(document.createElement('meta'), { name: 'robots' })))
     robots.content = 'noindex, nofollow'

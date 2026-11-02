@@ -10,7 +10,7 @@ export const PROGRESS = ['Completed', 'Ongoing', 'Planned']
 
 export const defaults = {
   profile: {
-    name: 'Hon. Gabriel Gathuka Kagombe',
+    name: 'Hon. GG Kagombe',
     officialName: 'Kagombe Gabriel Gathuka',
     title: 'Member of Parliament for Gatundu South',
     party: 'Democracy for Citizens Party (DCP)',
@@ -19,7 +19,7 @@ export const defaults = {
     intro:
       'A University of Nairobi graduate in economics and communication, a tea-sector director and a local board chairman, now serving Gatundu South in the National Assembly on the Agriculture and Public Accounts committees.',
     bio: [
-      'Hon. Gabriel Gathuka Kagombe is the Member of Parliament for Gatundu South in Kiambu County. He was elected in August 2022 with 17,815 votes and serves in the 13th Parliament of Kenya. In August 2026 he left the United Democratic Alliance, on whose ticket he was elected, and joined the Democracy for Citizens Party.',
+      'Hon. GG Kagombe is the Member of Parliament for Gatundu South in Kiambu County. He was elected in August 2022 with 17,815 votes and serves in the 13th Parliament of Kenya. In August 2026 he left the United Democratic Alliance, on whose ticket he was elected, and joined the Democracy for Citizens Party.',
       'He holds a Bachelor of Arts in Economics and Communication from the University of Nairobi. Outside Parliament he chairs the board of Highlands Power Company, is a board member of the Kiambu County Biashara Fund, chairs the Board of Management of Mutunguru Primary School and is a director of Theta Tea Factory and Ndarugu Tea Factory. His interests are public service, public administration and strategic leadership and development.',
     ],
     vision: '',

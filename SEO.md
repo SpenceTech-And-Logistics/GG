@@ -1,4 +1,4 @@
-# SEO tracker: Hon. Gabriel Gathuka Kagombe website
+# SEO tracker: Hon. GG Kagombe website
 
 Living record of the site's search setup. Updated whenever pages, content or settings change.
 Last updated: 2 November 2026.
@@ -57,6 +57,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 6. Keep adding events and projects with photos and real dates; each one is a new page that can rank for local searches.
 
 ## Change log
+
+- **2 Nov 2026**: Site name changed to “Hon. GG Kagombe” (titles, share image, structured data `name`). “Gabriel Gathuka Kagombe” kept only as a hidden `alternateName` so searches for the full name still find the site.
 
 - **2 Nov 2026**: Positions moved into the About page (section `#positions`); the separate Positions page and its search entry were removed, and `/positions` redirects to `/about#positions`. 43 pages, no warnings.
 

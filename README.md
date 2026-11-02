@@ -1,4 +1,4 @@
-# Hon. Gabriel Gathuka Kagombe: official website
+# Hon. GG Kagombe: official website
 
 Multi-page React + Vite site for the Member of Parliament for Gatundu South, with a Firebase admin dashboard at `/admin`.
 
