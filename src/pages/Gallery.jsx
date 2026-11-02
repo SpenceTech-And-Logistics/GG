@@ -9,7 +9,7 @@ import { useContent } from '../lib/useContent.js'
 
 const LINK = {
   events: { path: '/events/', label: 'See the event', category: 'Events' },
-  projects: { path: '/projects/', label: 'See the project', category: 'Projects' },
+  projects: { path: '', label: '', category: 'Projects' }, // project photos open without a link to the project
 }
 
 export default function Gallery() {
@@ -31,16 +31,17 @@ export default function Gallery() {
         id: g.id, kind: 'photo', src: g.src, thumb: g.src,
         title: g.title || titles[g.linkId] || '',
         category: link?.category || g.category,
-        ...(link && g.linkId ? { href: link.path + g.linkId, hrefLabel: link.label } : {}),
+        ...(link?.path && g.linkId ? { href: link.path + g.linkId, hrefLabel: link.label } : {}),
       }
     })
     const built = (type, items) =>
       allBundled(type, items).map(({ src, item, i }) => ({
         id: `${type}-${item.id}-${i}`, kind: 'photo', src, thumb: src, title: item.title,
-        category: LINK[type].category, href: LINK[type].path + item.id, hrefLabel: LINK[type].label,
+        category: LINK[type].category,
+        ...(LINK[type].path ? { href: LINK[type].path + item.id, hrefLabel: LINK[type].label } : {}),
       }))
     const saved = projects.flatMap((p) =>
-      (p.photos || []).map((src, i) => ({ id: `${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Projects', src, thumb: src, href: `/projects/${p.id}`, hrefLabel: 'See the project' })),
+      (p.photos || []).map((src, i) => ({ id: `${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Projects', src, thumb: src })),
     )
     const savedEvents = events.flatMap((e) =>
       (e.photos || []).map((src, i) => ({ id: `${e.id}-${i}`, kind: 'photo', title: e.title, category: 'Events', src, thumb: src, href: `/events/${e.id}`, hrefLabel: 'See the event' })),
@@ -89,7 +90,7 @@ export default function Gallery() {
                 )
               })}
             </div>
-            <p className="note">Photos open in a larger viewer, with a link to the event or project they come from.</p>
+            <p className="note">Photos open in a larger viewer. Event photos link to their event.</p>
           </>
         )}
       </section>
