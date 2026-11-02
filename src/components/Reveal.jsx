@@ -27,11 +27,12 @@ export function CountUp({ to, duration = 1600 }) {
     const tick = (t) => {
       start ??= t
       const p = Math.min(1, (t - start) / duration)
-      setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
+      const v = to * (1 - Math.pow(1 - p, 3))
+      setN(p < 1 ? (Number.isInteger(to) ? Math.round(v) : Math.round(v * 10) / 10) : to)
       if (p < 1) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [seen, to, duration])
-  return <span ref={ref}>{Number(n).toLocaleString('en-KE')}</span>
+  return <span ref={ref}>{Number(n).toLocaleString('en-KE', { maximumFractionDigits: 2 })}</span>
 }

@@ -12,12 +12,10 @@ export default function Home() {
   const socials = (contact.social || []).filter((l) => l.url)
   const news = press.slice(0, 3)
 
-  const stats = [
-    { n: 17815, label: 'Votes at the August 2022 election' },
-    { n: parliament.committees.length, label: 'Committees and caucuses' },
-    { n: parliament.stats.find((s) => /contribution/i.test(s.label))?.value ?? 47, label: 'Contributions in the House' },
-    { n: parliament.stats.find((s) => /report/i.test(s.label))?.value ?? 25, label: 'Committee reports' },
-  ]
+  // Edited in the dashboard under Profile and career → Home page figures.
+  const stats = (profile.homeStats || []).filter((s) => s.label && s.value !== '' && s.value !== null && !Number.isNaN(Number(s.value)))
+  // Up to 4 in a row; 6 or 9 figures sit in rows of 3 so no row is left half empty.
+  const cols = stats.length <= 4 ? stats.length : stats.length % 4 === 0 ? 4 : stats.length % 3 === 0 ? 3 : 4
 
   return (
     <>
@@ -45,16 +43,22 @@ export default function Home() {
 
       <Marquee items={profile.interests} />
 
+      {stats.length > 0 && (
       <section className="stat-strip" aria-label="Key figures">
-        <div className="wrap stat-strip-in">
+        <div className="wrap stat-strip-in" style={{ '--cols': cols }}>
           {stats.map((s, i) => (
-            <Reveal key={s.label} className="stat" delay={i * 110}>
-              <b><CountUp to={s.n} /></b>
+            <Reveal key={`${s.label}-${i}`} className={`stat${i % cols === 0 ? ' row-start' : ''}${i >= cols ? ' next-row' : ''}`} delay={(i % cols) * 110}>
+              <b>
+                {s.prefix && <small className="stat-affix">{s.prefix}</small>}
+                <CountUp to={Number(s.value)} />
+                {s.suffix && <small className="stat-affix">{s.suffix}</small>}
+              </b>
               <span>{s.label}</span>
             </Reveal>
           ))}
         </div>
       </section>
+      )}
 
       <section className="wrap section">
         <Reveal className="section-head">

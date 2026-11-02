@@ -61,7 +61,7 @@ export function Field({ def, value, onChange }) {
         {options.map((o) => <option key={o.value ?? o} value={o.value ?? o}>{o.label ?? o}</option>)}
       </select>,
     )
-  if (type === 'number') return wrap(<input type="number" min="0" value={value ?? 0} onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))} />)
+  if (type === 'number') return wrap(<input type="number" min="0" step="any" value={value ?? 0} onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))} />)
   if (type === 'image') return wrap(<ImageInput value={value} onChange={onChange} side={def.side || 1000} />)
   if (type === 'images') return wrap(<ImageInput value={value} onChange={onChange} multiple max={def.max || 6} />)
   if (type === 'strings') return wrap(<StringList value={value} onChange={onChange} long={def.long} />)

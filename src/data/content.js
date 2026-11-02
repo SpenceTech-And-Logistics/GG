@@ -24,6 +24,13 @@ export const defaults = {
     ],
     vision: '',
     photo: '',
+    // Figures in the band under the Home hero. Edited in the dashboard (Profile and career).
+    homeStats: [
+      { value: 17815, label: 'Votes at the August 2022 election', prefix: '', suffix: '' },
+      { value: 2, label: 'Committees and caucuses', prefix: '', suffix: '' },
+      { value: 47, label: 'Contributions in the House', prefix: '', suffix: '' },
+      { value: 25, label: 'Committee reports', prefix: '', suffix: '' },
+    ],
     interests: ['Public service', 'Public administration', 'Strategic leadership', 'Agriculture and livestock', 'Tea sector', 'Public accounts'],
     focus: [
       {
