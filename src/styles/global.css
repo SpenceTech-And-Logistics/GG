@@ -66,7 +66,7 @@ h2.title { font-size: clamp(30px, 3.6vw, 46px); line-height: 1.1; margin-top: 10
 .site-header.is-scrolled { border-color: var(--line); box-shadow: 0 8px 24px -18px rgba(20, 32, 26, 0.5); }
 .site-header.is-scrolled .site-header-in { padding-block: 10px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.monogram { width: 42px; height: 42px; background: var(--forest); color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font: 500 20px var(--serif); transition: transform 0.4s var(--ease), border-radius 0.4s; }
+.monogram { width: 42px; height: 42px; background: var(--forest); color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font: 700 20px var(--serif); letter-spacing: -0.02em; transition: transform 0.4s var(--ease), border-radius 0.4s; }
 .brand:hover .monogram { transform: rotate(-6deg) scale(1.06); border-radius: 14px; }
 .brand-name { font: 500 19px/1.1 var(--serif); }
 .brand-light .monogram { background: var(--leaf); }
@@ -107,7 +107,7 @@ h2.title { font-size: clamp(30px, 3.6vw, 46px); line-height: 1.1; margin-top: 10
 /* ---------- Hero ---------- */
 .hero { padding-block: clamp(32px, 6vw, 72px) clamp(48px, 7vw, 88px); display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
 .hero h1 { font-size: clamp(44px, 6.4vw, 88px); line-height: 1; letter-spacing: -0.025em; margin: 16px 0 22px; }
-.hero h1 em { font-style: italic; color: var(--forest); }
+.hero h1 em { font-style: italic; font-weight: 600; color: var(--forest); }
 .hero .lead { margin-bottom: 32px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
 .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 36px; font-size: 14px; color: var(--muted); }
@@ -119,7 +119,7 @@ h2.title { font-size: clamp(30px, 3.6vw, 46px); line-height: 1.1; margin-top: 10
 @keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 .portrait-card img { width: 100%; height: 100%; object-fit: cover; }
 .portrait-mono { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #fff; background: radial-gradient(circle at 30% 20%, #2c6a4b, var(--forest) 60%, #12301f); }
-.portrait-mono span { font: 400 clamp(88px, 12vw, 150px)/1 var(--serif); letter-spacing: -0.04em; }
+.portrait-mono span { font: 700 clamp(88px, 12vw, 150px)/1 var(--serif); letter-spacing: -0.03em; }
 .portrait-mono small { letter-spacing: 0.3em; text-transform: uppercase; font-size: 12px; font-weight: 600; opacity: 0.75; }
 @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } .portrait { max-width: 360px; } }
 

@@ -24,7 +24,7 @@ export default function News() {
         {first && (
           <Reveal className="card card-link" style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 24 }}>
             <div className="card-img" style={{ flex: '1 1 340px', minHeight: 260, aspectRatio: 'auto' }}>
-              {first.image ? <img src={first.image} alt="" loading="lazy" /> : <div className="img-fallback">GK</div>}
+              {first.image ? <img src={first.image} alt="" loading="lazy" /> : <div className="img-fallback">GG</div>}
             </div>
             <div style={{ flex: '1 1 380px', padding: 'clamp(24px,4vw,44px)', display: 'flex', flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
               <span className="meta">{meta(first)}</span>

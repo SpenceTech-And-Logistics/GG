@@ -23,7 +23,7 @@ export default function Navbar() {
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
       <div className="wrap site-header-in">
         <Link to="/" className="brand" onClick={close} aria-label="Hon. GG Kagombe, home">
-          <span className="monogram">GK</span>
+          <span className="monogram">GG</span>
           <span className="brand-name">
             Hon. GG
             <br />

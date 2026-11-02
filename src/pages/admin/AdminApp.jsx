@@ -63,7 +63,7 @@ function SignIn({ kit }) {
   return (
     <div className="adm-center">
       <form className="adm-signin" onSubmit={submit}>
-        <div className="adm-brand"><span>GK</span><b>Site dashboard</b></div>
+        <div className="adm-brand"><span>GG</span><b>Site dashboard</b></div>
         <h1>Sign in</h1>
         <p>For Hon. Kagombe's office team. Visitors do not see this page.</p>
         <label>Email<input name="email" type="email" autoComplete="username" required placeholder="office@example.com" /></label>
@@ -200,7 +200,7 @@ export default function AdminApp() {
   return (
     <div className="adm">
       <aside className="adm-side">
-        <Link to="/" className="adm-brand" title="Go to the website"><span>GK</span><b>Site dashboard</b></Link>
+        <Link to="/" className="adm-brand" title="Go to the website"><span>GG</span><b>Site dashboard</b></Link>
         <Link to="/" className="adm-home">← Back to the website</Link>
         <nav>
           {NAV.map(([key, label]) => (
