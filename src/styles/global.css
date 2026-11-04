@@ -325,3 +325,10 @@ section[id] { scroll-margin-top: 110px; }
 
 /* question rows: status and link on the right */
 .q-side { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; justify-content: flex-end; }
+
+/* funding table on a project page */
+.funding caption { caption-side: top; text-align: left; padding: 18px 20px 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.funding .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.funding tbody th, .funding tfoot th { text-align: left; font-weight: 600; font-size: 15px; letter-spacing: 0; text-transform: none; color: var(--ink); border-top: 1px solid var(--line); padding: 16px 20px; }
+.funding td { padding: 16px 20px; }
+.funding tfoot td, .funding tfoot th { border-top: 2px solid var(--line); font-weight: 700; }

@@ -58,6 +58,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 
 ## Change log
 
+- **4 Nov 2026**: Bursaries project updated from the 2022–2026 disbursement sheet (KES 231,953,852; funding table by category and year); new search title “NG-CDF bursaries in Gatundu South, 2022 to 2026”.
+
 - **2 Nov 2026**: Gallery now shows only standalone photos/videos and press images; project and event photos stay on their own pages (which keep their share images and sitemap image entries).
 
 - **2 Nov 2026**: `siteUrl` set to the live workers.dev address: sitemap.xml (with images), canonical links and full share-image addresses now generated.

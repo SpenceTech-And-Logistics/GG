@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import FundingTable from '../components/FundingTable.jsx'
 import PhotoGrid from '../components/PhotoGrid.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { money, yearLabel } from '../lib/media.js'
@@ -36,6 +37,11 @@ export default function ProjectDetail() {
       {facts.length > 0 && (
         <section className="wrap section-tight">
           <Reveal className="glance">{facts.map(([k, v]) => <div key={k}><small>{k}</small><b>{v}</b></div>)}</Reveal>
+        </section>
+      )}
+      {(project.funding || []).length > 0 && (
+        <section className="wrap section-tight">
+          <FundingTable rows={project.funding} />
         </section>
       )}
       <section className="wrap section-tight">
