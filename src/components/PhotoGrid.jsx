@@ -13,7 +13,8 @@ export default function PhotoGrid({ photos, title }) {
         {photos.map((p, i) => (
           <Reveal key={p.src} delay={(i % 3) * 90}>
             <button type="button" className="tileimg" onClick={() => setOpen(i)} aria-label={`Open photo ${i + 1} of ${photos.length}`}>
-              <img src={p.src} alt={`${title}, photo ${i + 1}`} loading={i < 3 ? 'eager' : 'lazy'} />
+              <img src={p.src} alt={`${title}, photo ${i + 1}${p.badge ? ` (${p.badge.toLowerCase()})` : ''}`} loading={i < 3 ? 'eager' : 'lazy'} />
+              {p.badge && <span className="badge">{p.badge}</span>}
             </button>
           </Reveal>
         ))}

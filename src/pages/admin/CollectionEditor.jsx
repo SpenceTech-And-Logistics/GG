@@ -162,7 +162,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
 
   async function save(e, anyway = false) {
     e?.preventDefault()
-    const matches = matchesFor(keyOf(form), items, editing === 'new' ? null : editing, keyOf)
+    const matches = matchesFor(keyOf(form), items, editing === 'new' ? null : editing, keyOf, form)
     if (matches.length && !anyway) {
       setDupWarn(matches)
       return

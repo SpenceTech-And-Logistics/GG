@@ -332,3 +332,6 @@ section[id] { scroll-margin-top: 110px; }
 .funding tbody th, .funding tfoot th { text-align: left; font-weight: 600; font-size: 15px; letter-spacing: 0; text-transform: none; color: var(--ink); border-top: 1px solid var(--line); padding: 16px 20px; }
 .funding td { padding: 16px 20px; }
 .funding tfoot td, .funding tfoot th { border-top: 2px solid var(--line); font-weight: 700; }
+
+/* "Before" photos on project pages */
+.mosaic .tileimg .badge { background: #9a6412; }

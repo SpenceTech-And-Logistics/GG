@@ -9,11 +9,17 @@ import { getDb } from './firebase.js'
  */
 
 const files = import.meta.glob('../assets/{projects,events}/*/*.{jpg,jpeg,png,webp}', { eager: true, query: '?url', import: 'default' })
+// Files are shown in name order: 01.jpg, 02.jpg… then before-01.jpg, before-02.jpg… (photos from before the works).
 const bundled = {}
+const beforeShots = new Set()
 for (const [path, url] of Object.entries(files).sort(([a], [b]) => a.localeCompare(b))) {
   const m = path.match(/assets\/(projects|events)\/([^/]+)\//)
   if (m) (bundled[`${m[1]}/${m[2]}`] ||= []).push(url)
+  if (/\/before-[^/]+$/.test(path)) beforeShots.add(url)
 }
+
+/** True for built-in photos taken before the works began. */
+export const isBefore = (src) => beforeShots.has(src)
 
 /** type is 'projects' or 'events'. */
 export function bundledPhotos(type, item) {
@@ -65,7 +71,7 @@ export function useItemPhotos(type, item) {
   const linked = useLinkedPhotos(item?.id)
   if (!item) return []
   const srcs = [...bundledPhotos(type, item), ...(item.photos || []), ...linked.map((g) => g.src)]
-  return [...new Set(srcs)].map((src) => ({ src, title: item.title }))
+  return [...new Set(srcs)].map((src) => ({ src, title: item.title, ...(isBefore(src) ? { caption: 'Before the works', badge: 'Before' } : {}) }))
 }
 
 let galleryPromise
