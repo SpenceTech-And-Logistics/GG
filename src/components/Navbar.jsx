@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useScroll } from '../lib/hooks.js'
+import { useContent } from '../lib/useContent.js'
+import Crest from './Crest.jsx'
 
 const links = [
   ['/', 'Home'],
@@ -16,19 +18,33 @@ const links = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { profile } = useContent()
   useScroll((y) => setScrolled(y > 24))
   const close = () => setOpen(false)
 
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
       <div className="wrap site-header-in">
-        <Link to="/" className="brand" onClick={close} aria-label="Hon. GG Kagombe, home">
-          <span className="monogram">GG</span>
-          <span className="brand-name">
-            Hon. GG
-            <br />
-            Kagombe
-          </span>
+        <Link to="/" className={`brand ${profile.logoHeader !== false ? 'has-crest' : ''}`} onClick={close} aria-label="Hon. GG Kagombe, home">
+          {profile.logoHeader !== false ? (
+            <>
+              <Crest tone="navy" />
+              <span className="brand-name">
+                <small>Hon.</small>
+                GG Kagombe
+                <em>MP Gatundu South</em>
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="monogram">GG</span>
+              <span className="brand-name">
+                Hon. GG
+                <br />
+                Kagombe
+              </span>
+            </>
+          )}
         </Link>
         <nav className="nav" id="main-nav" aria-label="Main">
           {links.map(([to, label]) => (

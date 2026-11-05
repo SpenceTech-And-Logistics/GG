@@ -335,3 +335,29 @@ section[id] { scroll-margin-top: 110px; }
 
 /* "Before" photos on project pages */
 .mosaic .tileimg .badge { background: #9a6412; }
+
+/* Office logo: Kenya coat of arms with the name (switchable in the dashboard) */
+.brand.has-crest { gap: 10px; }
+.brand .crest { height: 50px; width: auto; flex: none; transition: transform 0.4s var(--ease); }
+.brand.has-crest:hover .crest { transform: scale(1.05); }
+.brand.has-crest .brand-name { display: flex; flex-direction: column; font: 700 19px/1.05 var(--serif); letter-spacing: 0.01em; text-transform: uppercase; color: var(--forest); }
+.brand.has-crest .brand-name small { font: 700 11px/1 var(--serif); letter-spacing: 0.08em; margin-bottom: 3px; }
+.brand.has-crest .brand-name em { font: 700 9.5px/1 var(--sans, 'Instrument Sans', sans-serif); font-style: normal; letter-spacing: 0.32em; color: #9a6412; margin-top: 5px; }
+.lockup { display: inline-flex; align-items: center; gap: 18px; color: #fff; }
+.lockup .crest { height: 92px; width: auto; flex: none; }
+.lockup-text { display: flex; flex-direction: column; }
+.lockup-text small { font: 700 13px/1 var(--serif); letter-spacing: 0.06em; text-transform: uppercase; }
+.lockup-text b { font: 700 30px/1.05 var(--serif); text-transform: uppercase; letter-spacing: 0.01em; margin-top: 4px; white-space: nowrap; }
+.lockup-rule { display: flex; gap: 4px; margin: 8px 0 7px; height: 3px; }
+.lockup-rule::before { content: ''; flex: 1; background: #c9a24a; }
+.lockup-rule span { width: 22px; }
+.lockup-rule span:nth-child(1) { background: #fff; }
+.lockup-rule span:nth-child(2) { background: #b8202f; }
+.lockup-rule span:nth-child(3) { background: #2f8f5b; }
+.lockup-text em { font: 700 11px/1 'Instrument Sans', sans-serif; font-style: normal; letter-spacing: 0.42em; text-transform: uppercase; color: #c9a24a; }
+.lockup.is-stacked { flex-direction: column; text-align: center; gap: 22px; }
+.lockup.is-stacked .crest { height: auto; width: min(62%, 260px); }
+.lockup.is-stacked .lockup-text { align-items: stretch; }
+.lockup.is-stacked .lockup-text b { font-size: clamp(30px, 3.4vw, 42px); }
+.portrait-logo { background: radial-gradient(circle at 50% 30%, #1d2a44, #101828 70%); padding: 24px; }
+@media (max-width: 560px) { .brand .crest { height: 42px; } .brand.has-crest .brand-name { font-size: 16px; } .lockup .crest { height: 72px; } .lockup-text b { font-size: 24px; } }

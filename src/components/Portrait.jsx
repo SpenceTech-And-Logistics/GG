@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useScroll } from '../lib/hooks.js'
 import { useContent } from '../lib/useContent.js'
+import { Lockup } from './Crest.jsx'
 
 // Drop image files into src/assets/images and they are used automatically:
 //   portrait.jpg       the main portrait, used anywhere without its own photo
@@ -32,6 +33,10 @@ export default function Portrait({ className = '', parallax = true, eager = fals
       <div className="portrait-card">
         {src ? (
           <img src={src} alt={`Portrait of ${profile.name}`} loading={eager ? 'eager' : 'lazy'} />
+        ) : profile.logoHero !== false ? (
+          <div className="portrait-mono portrait-logo" role="img" aria-label="Hon. GG Kagombe, MP Gatundu South">
+            <Lockup tone="colour" stacked />
+          </div>
         ) : (
           <div className="portrait-mono" role="img" aria-label={`Monogram of ${profile.name}`}>
             <span>GG</span>

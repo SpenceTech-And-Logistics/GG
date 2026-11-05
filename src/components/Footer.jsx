@@ -1,22 +1,27 @@
 import { Link } from 'react-router-dom'
 import { useContent } from '../lib/useContent.js'
+import { Lockup } from './Crest.jsx'
 import SocialLinks from './SocialLinks.jsx'
 
 export default function Footer() {
-  const { contact } = useContent()
+  const { contact, profile } = useContent()
   const socials = (contact.social || []).filter((l) => l.url)
   return (
     <footer className="site-footer">
       <div className="wrap footer-top">
         <div>
-          <div className="brand brand-light">
-            <span className="monogram">GG</span>
-            <span className="brand-name">
-              Hon. GG
-              <br />
-              Kagombe
-            </span>
-          </div>
+          {contact && profile.logoFooter !== false ? (
+            <Lockup tone="colour" />
+          ) : (
+            <div className="brand brand-light">
+              <span className="monogram">GG</span>
+              <span className="brand-name">
+                Hon. GG
+                <br />
+                Kagombe
+              </span>
+            </div>
+          )}
           <p className="footer-blurb">Member of Parliament for Gatundu South, 13th Parliament of Kenya.</p>
         </div>
         <nav className="footer-links" aria-label="Footer">

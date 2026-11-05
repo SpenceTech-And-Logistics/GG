@@ -66,6 +66,16 @@ export function Field({ def, value, onChange, suggestions }) {
       </>,
     )
   }
+  if (type === 'checkbox')
+    return (
+      <label className={`adm-field adm-check ${def.wide ? 'wide' : ''}`}>
+        <input type="checkbox" checked={value !== false} onChange={(e) => onChange(e.target.checked)} />
+        <span>
+          <span className="adm-label">{label}</span>
+          {hint && <small>{hint}</small>}
+        </span>
+      </label>
+    )
   if (type === 'select')
     return wrap(
       <select value={value ?? ''} onChange={(e) => onChange(e.target.value)}>

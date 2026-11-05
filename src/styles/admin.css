@@ -106,3 +106,8 @@
 .adm-dup .adm-actions { margin-top: 12px; }
 .adm-table tr.is-dup td { background: #fff7e8; }
 .adm-dup-badge { display: inline-block; margin-left: 8px; border: 0; background: #ecd6ad; color: #6a4508; font: 700 11px 'Instrument Sans', sans-serif; padding: 3px 9px; border-radius: 99px; cursor: pointer; vertical-align: middle; }
+
+/* tick-box fields */
+.adm-check { flex-direction: row; align-items: flex-start; gap: 12px; cursor: pointer; }
+.adm-check input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--forest); }
+.adm-check small { display: block; }

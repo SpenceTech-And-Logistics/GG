@@ -23,6 +23,10 @@ export const defaults = {
       'He holds a Bachelor of Arts in Economics and Communication from the University of Nairobi. Outside Parliament he chairs the board of Highlands Power Company, is a board member of the Kiambu County Biashara Fund, chairs the Board of Management of Mutunguru Primary School and is a director of Theta Tea Factory and Ndarugu Tea Factory. His interests are public service, public administration and strategic leadership and development.',
     ],
     vision: '',
+    // Kenya coat of arms logo: switch each place on or off in the dashboard (Profile and career → Logo).
+    logoHeader: true,
+    logoFooter: true,
+    logoHero: true,
     photo: '',
     // Figures in the band under the Home hero. Edited in the dashboard (Profile and career).
     homeStats: [
