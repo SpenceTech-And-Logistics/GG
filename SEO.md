@@ -9,9 +9,9 @@ Last updated: 5 November 2026.
 |---|---|---|
 | Page titles and descriptions | Done | Every page, generated from the content (`src/lib/seo.js`). |
 | Link previews (WhatsApp, Facebook, X) | Done | Share image per page, full addresses. |
-| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (71 pages). |
+| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (75 pages). |
 | Structured data (schema.org) | Done | Person + WebSite (home), Person (About), Event (dated events), breadcrumbs (all inner pages). |
-| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 71 pages. |
+| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 75 pages. |
 | robots.txt | Done | `/admin` blocked; sitemap line added once `siteUrl` is set. |
 | Dashboard and 404 pages | Done | `noindex`. |
 | Canonical links | Done | Point to the workers.dev address until a custom domain is set. |
@@ -57,6 +57,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 6. Keep adding events and projects with photos and real dates; each one is a new page that can rank for local searches.
 
 ## Change log
+
+- **5 Nov 2026**: Four projects added from NG-CDF Gatundu South Facebook posts (Ruburi road, Gatundu TVET cabro road, Ndarugu Dairy Cooperative milk cooler, first skills graduation of 447 youths); Waruiru–Gacumeka road and Handege Secondary toilets updated. 75 pages.
 
 - **5 Nov 2026**: Before-and-after video added to the Icaciri Primary School classrooms project.
 
