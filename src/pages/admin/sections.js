@@ -88,6 +88,8 @@ export const projectsConfig = {
     { key: 'ward', label: 'Ward' },
     { key: 'amount', label: 'Amount (KES)', type: 'number' },
     { key: 'description', label: 'Description', type: 'textarea', wide: true, hint: 'One or two lines on what was done and who benefits.' },
+    { key: 'itemsTitle', label: 'Heading for a list on the project page (optional, e.g. Roads)' },
+    { key: 'items', label: 'List on the project page (optional, e.g. each road)', type: 'strings', wide: true },
     {
       key: 'funding',
       label: 'Funding by year (optional table on the project page)',

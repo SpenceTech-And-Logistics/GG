@@ -361,3 +361,8 @@ section[id] { scroll-margin-top: 110px; }
 .lockup.is-stacked .lockup-text b { font-size: clamp(30px, 3.4vw, 42px); }
 .portrait-logo { background: radial-gradient(circle at 50% 30%, #1d2a44, #101828 70%); padding: 24px; }
 @media (max-width: 560px) { .brand .crest { height: 42px; } .brand.has-crest .brand-name { font-size: 16px; } .lockup .crest { height: 72px; } .lockup-text b { font-size: 24px; } }
+
+/* numbered list on a project page (e.g. roads) */
+.item-list ol { list-style: none; counter-reset: item; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px 20px; }
+.item-list li { counter-increment: item; display: flex; align-items: baseline; gap: 12px; padding: 14px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; font: 500 18px/1.3 var(--serif); }
+.item-list li::before { content: counter(item, decimal-leading-zero); font: 700 12px/1 'Instrument Sans', sans-serif; color: #9a6412; letter-spacing: 0.08em; }

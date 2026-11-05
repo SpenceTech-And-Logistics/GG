@@ -39,6 +39,17 @@ export default function ProjectDetail() {
           <Reveal className="glance">{facts.map(([k, v]) => <div key={k}><small>{k}</small><b>{v}</b></div>)}</Reveal>
         </section>
       )}
+      {(project.items || []).filter(Boolean).length > 0 && (
+        <section className="wrap section-tight">
+          <Reveal>
+            <span className="eyebrow">{project.itemsTitle || 'Included'}</span>
+            <h2 className="title" style={{ marginBottom: 24 }}>{project.items.filter(Boolean).length} {(project.itemsTitle || 'items').toLowerCase()}</h2>
+          </Reveal>
+          <Reveal className="item-list">
+            <ol>{project.items.filter(Boolean).map((x) => <li key={x}>{x}</li>)}</ol>
+          </Reveal>
+        </section>
+      )}
       {(project.funding || []).length > 0 && (
         <section className="wrap section-tight">
           <FundingTable rows={project.funding} />
