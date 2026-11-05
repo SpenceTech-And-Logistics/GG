@@ -4,7 +4,7 @@ import { bundledPhotos } from '../../lib/photos.js'
 const status = { key: 'status', label: 'Status', type: 'select', options: [{ value: 'published', label: 'Published' }, { value: 'draft', label: 'Draft (hidden)' }] }
 const badge = (it) => (it.status === 'draft' ? 'Draft' : 'Published')
 const photoCount = (type) => (it) => {
-  const n = bundledPhotos(type, it).length + (it.photos || []).length
+  const n = bundledPhotos(type, it).length + (it.photos || []).length + (Number(it.photoCount) || 0)
   return n ? `${n}${bundledPhotos(type, it).length ? ' built-in' : ''}` : '–'
 }
 const photoKeyField = {
@@ -74,7 +74,7 @@ export const contactFields = [
 export const projectsConfig = {
   coll: 'projects',
   title: 'Projects',
-  blurb: 'What has been done in Gatundu South. Add up to 5 photos here, or use Photo import for many at once. Photos show on the project’s own page.',
+  blurb: 'What has been done in Gatundu South. Add as many photos as you like here, or use Photo import for many projects at once. Photos show on the project’s own page.',
   noun: 'Project',
   builtins: defaults.projects,
   linked: true,
@@ -105,7 +105,7 @@ export const projectsConfig = {
     { key: 'seoTitle', label: 'Short title for Google (optional)', wide: true, hint: 'Used in search results and link previews when the title is long. Keep it under 55 characters.' },
     { key: 'source', label: 'Link to a report (optional)', type: 'url', wide: true },
     photoKeyField,
-    { key: 'photos', label: 'Photos', type: 'images', max: 5, wide: true, hint: 'For more than 5, use Photo import.' },
+    { key: 'photos', label: 'Photos', type: 'images', wide: true },
     status,
   ],
   columns: [
@@ -153,7 +153,7 @@ export const eventsConfig = {
     { key: 'seoTitle', label: 'Short title for Google (optional)', wide: true, hint: 'Used in search results and link previews when the title is long. Keep it under 55 characters.' },
     { key: 'source', label: 'Link to a report (optional)', type: 'url', wide: true },
     photoKeyField,
-    { key: 'photos', label: 'Photos', type: 'images', max: 4, wide: true, hint: 'For more than 4, use Photo import.' },
+    { key: 'photos', label: 'Photos', type: 'images', wide: true },
     status,
   ],
   columns: [

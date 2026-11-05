@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getDb } from '../../lib/firebase.js'
+import { resizeImage } from '../../lib/media.js'
 import { csvTemplate, readRecords, saveText } from '../../lib/importer.js'
 import { bundledPhotos, forgetPhotoCache } from '../../lib/photos.js'
 import { copyBuiltins, deleteLinkedPhotos, loadRemoved, saveRemoved } from './builtins.js'
 import { findDuplicates, matchesFor, suggestKeep } from './duplicates.js'
 import { useContent } from '../../lib/useContent.js'
-import { Field } from './Fields.jsx'
+import { Field, PhotoManager } from './Fields.jsx'
 
 /**
  * A list of records (projects, news, gallery) with add, edit, delete and optional import from CSV or JSON.
@@ -32,6 +33,11 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   const [confirm, setConfirm] = useState('')
   const [catFilter, setCatFilter] = useState('All')
   const [removed, setRemoved] = useState([]) // built-in items deleted from the site
+  // Photos of the record being edited (projects and events): any number, each saved as its own Gallery entry.
+  const [pics, setPics] = useState([])
+  const [picsLoading, setPicsLoading] = useState(false)
+  const [savedLinked, setSavedLinked] = useState([]) // [{ id, order }] linked photos when editing began
+  const managesPhotos = Boolean(linked) && fields.some((f) => f.key === 'photos')
   const fileRef = useRef(null)
 
   const load = useCallback(async () => {
@@ -184,15 +190,51 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   function startNew() {
     // Adding while a category is picked starts the new record in that category.
     setForm(activeCat !== 'All' && activeCat !== 'No category' ? { ...empty, category: activeCat } : empty)
+    setPics([])
+    setSavedLinked([])
     setEditing('new')
     setDupWarn(null)
     setMsg(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+  async function loadPics(item) {
+    setPics((item.photos || []).map((src) => ({ src, kind: 'inline' })))
+    setSavedLinked([])
+    if (!managesPhotos) return
+    setPicsLoading(true)
+    try {
+      const { fs, db } = await getDb()
+      const snap = await fs.getDocs(fs.query(fs.collection(db, 'gallery'), fs.where('linkId', '==', item.id)))
+      const found = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((g) => g.src).sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      setSavedLinked(found.map((g) => ({ id: g.id, order: g.order })))
+      setPics((list) => [...list, ...found.map((g) => ({ id: g.id, src: g.src, kind: 'linked' }))])
+    } catch (ex) {
+      setMsg({ bad: true, text: `Could not load this ${noun.toLowerCase()}’s photos: ${ex.message}` })
+    }
+    setPicsLoading(false)
+  }
+
+  /** Save the photo list as Gallery entries linked to the record (in the order shown), and remove the ones taken out. */
+  async function savePics(fs, db, id, title) {
+    const keep = new Set(pics.filter((p) => p.kind === 'linked').map((p) => p.id))
+    for (const g of savedLinked) if (!keep.has(g.id)) await fs.deleteDoc(fs.doc(db, 'gallery', g.id))
+    for (const [i, p] of pics.entries()) {
+      if (p.kind === 'linked') {
+        if (savedLinked.find((g) => g.id === p.id)?.order !== i) await fs.updateDoc(fs.doc(db, 'gallery', p.id), { order: i })
+      } else {
+        await fs.addDoc(fs.collection(db, 'gallery'), {
+          type: 'photo', title: title || '', category: coll === 'events' ? 'Events' : 'Projects', src: p.src,
+          linkType: coll, linkId: id, order: i, status: 'published', createdAt: fs.serverTimestamp(),
+        })
+      }
+    }
+  }
+
   function startEdit(item) {
     const { id, ...rest } = item
     void id
     setForm({ ...empty, ...rest })
+    loadPics(item)
     setEditing(item.id)
     setDupWarn(null)
     setMsg(null)
@@ -219,11 +261,19 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         const known = [...(f.options || []), ...(items || []).map((it) => it[f.key])].find((o) => String(o || '').toLowerCase() === typed.toLowerCase())
         data[f.key] = known || (typed ? typed[0].toUpperCase() + typed.slice(1) : typed)
       }
-      if (JSON.stringify(data).length > 950000) throw new Error('Too large to save. Remove a photo or two, or use smaller photos.')
-      if (editing === 'new') {
-        await fs.addDoc(fs.collection(db, coll), { ...data, createdAt: fs.serverTimestamp() })
+      const ref = editing === 'new' ? fs.doc(fs.collection(db, coll)) : fs.doc(db, coll, editing)
+      if (managesPhotos) {
+        // Photos are saved first, as separate entries, so the record itself stays small whatever their number.
+        await savePics(fs, db, ref.id, data.title)
+        data.photos = []
+        data.photoCount = pics.length
+        // A small copy of the first photo is the card picture (built-in photos come first when there are any).
+        const first = pics[0]?.src
+        data.cover = first && !bundledPhotos(coll, { ...data, id: ref.id }).length ? await resizeImage(await (await fetch(first)).blob(), 640, 0.7) : ''
       }
-      else await fs.setDoc(fs.doc(db, coll, editing), { ...data, ...(createdAt ? { createdAt } : {}) })
+      if (JSON.stringify(data).length > 950000) throw new Error('Too large to save. Remove a photo or two, or use smaller photos.')
+      if (editing === 'new') await fs.setDoc(ref, { ...data, createdAt: fs.serverTimestamp() })
+      else await fs.setDoc(ref, { ...data, ...(createdAt ? { createdAt } : {}) })
       await reload()
       setEditing(null)
       setMsg({ text: `${noun} saved. It is live on the site${data.status === 'draft' ? ' once you set it to Published' : ''}.` })
@@ -386,7 +436,12 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         <form className="adm-panel" onSubmit={save}>
           <h2>{editing === 'new' ? `New ${noun.toLowerCase()}` : `Edit ${noun.toLowerCase()}`}</h2>
           <div className="adm-grid">
-            {fields.filter(visible).map((f) => (
+            {fields.filter(visible).map((f) => managesPhotos && f.key === 'photos' ? (
+              <div className="adm-field wide" key={f.key}>
+                <span className="adm-label">{f.label}</span>
+                <PhotoManager entries={pics} onChange={setPics} loading={picsLoading} />
+              </div>
+            ) : (
               <Field
                 key={f.key}
                 def={f}

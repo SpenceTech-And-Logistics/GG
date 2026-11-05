@@ -44,6 +44,74 @@ export function ImageInput({ value, onChange, multiple = false, max = 6, side = 
   )
 }
 
+/**
+ * Any number of photos for a project or event. entries: [{ src, id?, kind: 'inline' | 'linked' | 'new' }].
+ * 'inline' photos live on the record itself (older ones), 'linked' ones are separate Gallery entries
+ * linked to the record, 'new' ones are saved as linked entries when the record is saved.
+ */
+export function PhotoManager({ entries, onChange, loading }) {
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(0)
+
+  async function pick(e) {
+    setErr('')
+    const files = [...e.target.files]
+    e.target.value = ''
+    const added = []
+    setBusy(files.length)
+    for (const f of files) {
+      try {
+        let src = await resizeImage(f, 1400, 0.72)
+        if (src.length > 900000) src = await resizeImage(f, 1000, 0.62)
+        added.push({ src, kind: 'new' })
+      } catch (ex) {
+        setErr(`${f.name}: ${ex.message}`)
+      }
+      setBusy((n) => n - 1)
+    }
+    onChange((list) => [...list, ...added])
+  }
+
+  const remove = (i) => onChange((list) => list.filter((_, j) => j !== i))
+  const move = (i, d) =>
+    onChange((list) => {
+      const next = [...list]
+      const j = i + d
+      if (j < 0 || j >= next.length) return list
+      ;[next[i], next[j]] = [next[j], next[i]]
+      return next
+    })
+
+  return (
+    <div className="adm-images">
+      <div className="adm-thumbs">
+        {entries.map((p, i) => (
+          <figure key={p.id || `${p.kind}-${i}`}>
+            <img src={p.src} alt="" />
+            <button type="button" onClick={() => remove(i)} aria-label={`Remove photo ${i + 1}`}>×</button>
+            {entries.length > 1 && (
+              <span className="adm-order">
+                <button type="button" onClick={() => move(i, -1)} disabled={i === 0} aria-label={`Move photo ${i + 1} earlier`}>‹</button>
+                <button type="button" onClick={() => move(i, 1)} disabled={i === entries.length - 1} aria-label={`Move photo ${i + 1} later`}>›</button>
+              </span>
+            )}
+            {p.kind === 'new' && <em className="adm-new">New</em>}
+          </figure>
+        ))}
+        <label className="adm-drop">
+          <span>{busy > 0 ? `Preparing ${busy}…` : 'Add photos'}</span>
+          <input type="file" accept="image/*" multiple onChange={pick} hidden />
+        </label>
+      </div>
+      <small>
+        {loading ? 'Loading saved photos… ' : `${entries.length} photo${entries.length === 1 ? '' : 's'}. `}
+        No limit: add as many as you like. They are resized automatically and saved when you save. Use ‹ › to change the order.
+      </small>
+      {err && <p className="adm-alert">{err}</p>}
+    </div>
+  )
+}
+
 export function Field({ def, value, onChange, suggestions }) {
   const { type = 'text', label, options, hint } = def
   const wrap = (control) => (
