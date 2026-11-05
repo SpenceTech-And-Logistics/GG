@@ -58,6 +58,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 
 ## Change log
 
+- **5 Nov 2026**: Before-and-after video added to the Icaciri Primary School classrooms project.
+
 - **5 Nov 2026**: Waruiru–Gacumeka road added with a video (project pages can now show built-in videos: `video-01.mp4`, with `poster.jpg` as the card and share image). 71 pages.
 
 - **5 Nov 2026**: Projects page: new Bursaries filter listing the allocations as a table instead of a card. Parliament page: voting section removed for good (and its dashboard field).

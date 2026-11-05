@@ -60,7 +60,7 @@ export default function ProjectDetail() {
         <section className="wrap section-tight">
           <Reveal className="video-row">
             {videos.map((src, i) => (
-              <video key={src} src={src} controls playsInline preload="metadata" poster={bundledPoster('projects', project) || photos[0]?.src} aria-label={`${project.title}, video ${i + 1}`} />
+              <video key={src} src={src} controls playsInline preload="metadata" onLoadedMetadata={(e) => { const v = e.currentTarget; v.dataset.shape = v.videoHeight > v.videoWidth ? 'tall' : 'wide'; v.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}` }} poster={bundledPoster('projects', project) || photos[0]?.src} aria-label={`${project.title}, video ${i + 1}`} />
             ))}
           </Reveal>
         </section>

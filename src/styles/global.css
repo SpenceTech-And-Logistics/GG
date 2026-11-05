@@ -386,4 +386,5 @@ section[id] { scroll-margin-top: 110px; }
 
 /* Videos on project pages (portrait phone clips sit side by side) */
 .video-row { display: flex; flex-wrap: wrap; gap: 16px; }
-.video-row video { width: min(100%, 380px); max-height: 80vh; aspect-ratio: 9 / 16; object-fit: contain; background: #0d1b2a; border-radius: 12px; }
+.video-row video { width: min(100%, 760px); max-height: 80vh; background: #0d1b2a; border-radius: 12px; }
+.video-row video[data-shape='tall'] { width: min(100%, 380px); }

@@ -455,7 +455,7 @@ export const defaults = {
       year: '2023/24',
       ward: '',
       amount: 0,
-      description: 'NG-CDF Gatundu South renovated six classrooms at Icaciri Primary School to completion in the 2023/2024 financial year. The photos show the classrooms before and after.',
+      description: 'NG-CDF Gatundu South renovated six classrooms at Icaciri Primary School to completion in the 2023/2024 financial year. The photos and the video show the classrooms before and after.',
       progress: 'Completed',
       source: '',
       photos: [],
