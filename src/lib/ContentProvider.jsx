@@ -25,6 +25,20 @@ function uniqueByTitle(items) {
   }
   return items.filter((it) => best.get(key(it) || it.id) === it)
 }
+/**
+ * Dashboard copies of built-in items keep up with fields added to the site later (e.g. the bursary allocations,
+ * a project's list of roads): anything the copy leaves empty is filled from the built-in item.
+ */
+function withBuiltin(items, builtins) {
+  const byKey = new Map(builtins.map((b) => [b.id, b]))
+  return items.map((it) => {
+    const b = byKey.get(it.builtinKey || it.id)
+    if (!b) return it
+    const out = { ...it }
+    for (const k of ['funding', 'items', 'itemsTitle', 'seoTitle']) if (!nonEmpty(out[k]) && nonEmpty(b[k])) out[k] = b[k]
+    return out
+  })
+}
 const byDateDesc = (a, b) => String(b.date || b.year || '').localeCompare(String(a.date || a.year || ''))
 
 export function ContentProvider({ children }) {
@@ -64,7 +78,7 @@ export function ContentProvider({ children }) {
   const value = useMemo(() => {
     const r = remote
     const published = (items) => items.filter((i) => i.status !== 'draft')
-    const projects = r && r.projects.length ? uniqueByTitle(published(r.projects)).sort(byDateDesc) : defaults.projects
+    const projects = r && r.projects.length ? uniqueByTitle(withBuiltin(published(r.projects), defaults.projects)).sort(byDateDesc) : defaults.projects
     const press = r && r.press.length ? published(r.press).sort(byDateDesc) : defaults.press
     const events = r && r.events.length ? uniqueByTitle(published(r.events)).sort(byDateDesc) : defaults.events
     const positions = r && r.positions.length ? published(r.positions).sort(byOrder) : defaults.positions
