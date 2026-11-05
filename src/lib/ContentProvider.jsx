@@ -39,6 +39,21 @@ function withBuiltin(items, builtins) {
     return out
   })
 }
+const titleKey = (t) => String(t || '').replace(/\s+/g, ' ').trim().toLowerCase()
+
+/**
+ * Dashboard items, plus the built-in ones the dashboard does not have (so projects added to the site later show
+ * without copying), minus built-in ones the office deleted (site/removed).
+ */
+function combine(all, builtins, removed = []) {
+  if (!all.length && !removed.length) return builtins
+  const have = new Set(all.flatMap((i) => [i.id, i.builtinKey]).filter(Boolean))
+  const titles = new Set(all.map((i) => titleKey(i.title)))
+  const gone = new Set(removed)
+  const extra = builtins.filter((b) => !have.has(b.id) && !gone.has(b.id) && !titles.has(titleKey(b.title)))
+  const published = withBuiltin(all.filter((i) => i.status !== 'draft'), builtins)
+  return uniqueByTitle([...published, ...extra]).sort(byDateDesc)
+}
 const byDateDesc = (a, b) => String(b.date || b.year || '').localeCompare(String(a.date || a.year || ''))
 
 export function ContentProvider({ children }) {
@@ -78,9 +93,10 @@ export function ContentProvider({ children }) {
   const value = useMemo(() => {
     const r = remote
     const published = (items) => items.filter((i) => i.status !== 'draft')
-    const projects = r && r.projects.length ? uniqueByTitle(withBuiltin(published(r.projects), defaults.projects)).sort(byDateDesc) : defaults.projects
+    const removed = r?.docs.removed || {}
+    const projects = r ? combine(r.projects, defaults.projects, removed.projects) : defaults.projects
     const press = r && r.press.length ? published(r.press).sort(byDateDesc) : defaults.press
-    const events = r && r.events.length ? uniqueByTitle(published(r.events)).sort(byDateDesc) : defaults.events
+    const events = r ? combine(r.events, defaults.events, removed.events) : defaults.events
     const positions = r && r.positions.length ? published(r.positions).sort(byOrder) : defaults.positions
     return {
       positions,

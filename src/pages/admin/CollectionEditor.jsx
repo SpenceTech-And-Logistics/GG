@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getDb } from '../../lib/firebase.js'
 import { csvTemplate, readRecords, saveText } from '../../lib/importer.js'
 import { bundledPhotos, forgetPhotoCache } from '../../lib/photos.js'
-import { copyBuiltins, deleteLinkedPhotos } from './builtins.js'
+import { copyBuiltins, deleteLinkedPhotos, loadRemoved, saveRemoved } from './builtins.js'
 import { findDuplicates, matchesFor, suggestKeep } from './duplicates.js'
 import { useContent } from '../../lib/useContent.js'
 import { Field } from './Fields.jsx'
@@ -31,6 +31,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   })
   const [confirm, setConfirm] = useState('')
   const [catFilter, setCatFilter] = useState('All')
+  const [removed, setRemoved] = useState([]) // built-in items deleted from the site
   const fileRef = useRef(null)
 
   const load = useCallback(async () => {
@@ -38,6 +39,15 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     const snap = await fs.getDocs(fs.collection(db, coll))
     return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
   }, [coll])
+
+  useEffect(() => {
+    if (!builtins) return undefined
+    let alive = true
+    loadRemoved(coll).then((ids) => alive && setRemoved(ids)).catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [coll, builtins])
 
   useEffect(() => {
     let alive = true
@@ -55,6 +65,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
 
   const reload = async () => {
     setItems(await load())
+    if (builtins) setRemoved(await loadRemoved(coll))
     forgetPhotoCache()
     refresh()
   }
@@ -63,17 +74,26 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   const keyOf = importer?.key || ((x) => x.title)
   const dupGroups = items ? findDuplicates(items, keyOf, ignored) : []
   const flagged = new Set(dupGroups.flatMap((g) => g.items.map((it) => it.id)))
+  // Built-in items (from the site's code) that are not in the dashboard: they show on the site, so they are listed too.
+  const sameTitle = (a, b) => String(a || '').replace(/\s+/g, ' ').trim().toLowerCase() === String(b || '').replace(/\s+/g, ' ').trim().toLowerCase()
+  const uncopied = builtins && items
+    ? builtins
+        .filter((b) => !removed.includes(b.id) && !items.some((i) => i.id === b.id || i.builtinKey === b.id || sameTitle(i.title, b.title)))
+        .map((b) => ({ ...b, builtinKey: b.id, status: 'published', builtinOnly: true }))
+    : []
+  const rows = items ? [...items, ...uncopied] : []
+  const removedHere = builtins ? builtins.filter((b) => removed.includes(b.id)) : []
   // Filter the list by category (projects, events, news…) when the records have one.
   const catField = fields.find((f) => f.key === 'category')
   const catCounts = {}
-  for (const it of items || []) {
+  for (const it of rows) {
     const c = String(it.category || '').trim() || 'No category'
     catCounts[c] = (catCounts[c] || 0) + 1
   }
   const catNames = Object.keys(catCounts).sort((a, b) => a.localeCompare(b))
   const showCats = Boolean(catField) && catNames.length > 1
   const activeCat = showCats && catCounts[catFilter] ? catFilter : 'All'
-  const listed = activeCat === 'All' ? items || [] : (items || []).filter((it) => (String(it.category || '').trim() || 'No category') === activeCat)
+  const listed = activeCat === 'All' ? rows : rows.filter((it) => (String(it.category || '').trim() || 'No category') === activeCat)
   const extraCount = dupGroups.reduce((n, g) => n + g.items.length - 1, 0)
 
   /** What tells copies apart in the review: dates, place, photos, when added. */
@@ -134,19 +154,25 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     if (!dupGroups.length) setMsg({ text: `Checked ${items?.length || 0} ${title.toLowerCase()}: no duplicates found.` })
   }
 
-  // Built-in items the dashboard does not have yet.
-  const missing = builtins && items ? builtins.filter((b) => !items.some((i) => i.id === b.id)) : []
+  const missing = uncopied
 
-  /** Before the first item is added, copy the built-in ones in so they do not vanish from the site. */
-  async function keepBuiltins() {
-    if (builtins && items && items.length === 0) await copyBuiltins(coll, builtins)
+  async function restoreRemoved() {
+    setBusy(true)
+    try {
+      await saveRemoved(coll, [])
+      await reload()
+      setMsg({ text: `Restored ${removedHere.length} built-in ${removedHere.length === 1 ? noun.toLowerCase() : title.toLowerCase()} to the site.` })
+    } catch (ex) {
+      setMsg({ bad: true, text: ex.message })
+    }
+    setBusy(false)
   }
 
   async function copyIn() {
     setBusy(true)
     setMsg(null)
     try {
-      const n = await copyBuiltins(coll, builtins, items.map((i) => i.id))
+      const n = await copyBuiltins(coll, builtins.filter((b) => uncopied.some((u) => u.id === b.id)))
       await reload()
       setMsg({ text: `Copied ${n} built-in ${title.toLowerCase()} into the dashboard. Their photos stay attached.` })
     } catch (ex) {
@@ -195,7 +221,6 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       }
       if (JSON.stringify(data).length > 950000) throw new Error('Too large to save. Remove a photo or two, or use smaller photos.')
       if (editing === 'new') {
-        await keepBuiltins()
         await fs.addDoc(fs.collection(db, coll), { ...data, createdAt: fs.serverTimestamp() })
       }
       else await fs.setDoc(fs.doc(db, coll, editing), { ...data, ...(createdAt ? { createdAt } : {}) })
@@ -211,7 +236,11 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   async function remove(id) {
     try {
       const { fs, db } = await getDb()
-      await fs.deleteDoc(fs.doc(db, coll, id))
+      const row = rows.find((r) => r.id === id) || {}
+      const key = row.builtinKey || (builtins?.some((b) => b.id === id) ? id : '')
+      // A built-in item would come back from the site's code, so it is also recorded as deleted.
+      if (key) await saveRemoved(coll, [...removed, key])
+      if (!row.builtinOnly) await fs.deleteDoc(fs.doc(db, coll, id))
       if (linked) await deleteLinkedPhotos(id)
       setConfirm('')
       await reload()
@@ -230,8 +259,8 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       const records = await readRecords(file)
       const keyOf = importer.key || ((d) => d.title)
       const norm = (d) => String(keyOf(d) || '').trim().toLowerCase()
-      // Built-in items are copied in before the first import, so treat them as already listed too.
-      const seen = new Set([...(items || []), ...(builtins && items?.length === 0 ? builtins : [])].map(norm))
+      // Built-in items are listed too, so they count as already there.
+      const seen = new Set(rows.map(norm))
       const fresh = []
       let skipped = 0
       for (const r of records) {
@@ -245,7 +274,6 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         fresh.push(doc)
       }
       const { fs, db } = await getDb()
-      if (fresh.length) await keepBuiltins()
       for (let i = 0; i < fresh.length; i += 400) {
         const batch = fs.writeBatch(db)
         fresh.slice(i, i + 400).forEach((d) => batch.set(fs.doc(fs.collection(db, coll)), { ...d, createdAt: fs.serverTimestamp() }))
@@ -338,11 +366,19 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       {missing.length > 0 && (
         <div className="adm-banner">
           <p>
-            <b>{missing.length} built-in {missing.length === 1 ? noun.toLowerCase() : title.toLowerCase()}</b> {missing.length === 1 ? 'shows' : 'show'} on the site but {missing.length === 1 ? 'is' : 'are'} not in the dashboard yet.
-            Copy them in to edit them. Their photos stay attached.
-            {items.length === 0 && ' If you add a new one first, they are copied in automatically so nothing disappears from the site.'}
+            <b>{missing.length} built-in {missing.length === 1 ? noun.toLowerCase() : title.toLowerCase()}</b> (marked <i>Built-in</i> in the list) {missing.length === 1 ? 'comes' : 'come'} with the website.
+            Edit or delete them like any other: editing saves a copy into the dashboard, and deleting takes them off the site.
           </p>
-          <button type="button" className="adm-btn" onClick={copyIn} disabled={busy}>Copy built-in {title.toLowerCase()}</button>
+          <button type="button" className="adm-btn ghost" onClick={copyIn} disabled={busy}>Copy them all in</button>
+        </div>
+      )}
+
+      {removedHere.length > 0 && (
+        <div className="adm-banner">
+          <p>
+            <b>{removedHere.length} built-in {removedHere.length === 1 ? noun.toLowerCase() : title.toLowerCase()} deleted</b> from the site: {removedHere.slice(0, 4).map((b) => `“${b.title}”`).join(', ')}{removedHere.length > 4 ? ` and ${removedHere.length - 4} more` : ''}.
+          </p>
+          <button type="button" className="adm-btn ghost" onClick={restoreRemoved} disabled={busy}>Restore {removedHere.length === 1 ? 'it' : 'them'}</button>
         </div>
       )}
 
@@ -382,7 +418,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
       <div className="adm-panel flush">
         {items === null ? (
           <p className="adm-pad">Loading…</p>
-        ) : items.length === 0 ? (
+        ) : rows.length === 0 ? (
           <p className="adm-pad">Nothing here yet. Use “Add {noun.toLowerCase()}”{importer ? ' or “Import from file”' : ''}{builtins ? ', or copy the built-in ones in above' : ''}. Until you add one, the public site shows its built-in content.</p>
         ) : (
           <>
@@ -390,13 +426,13 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
             <div className="adm-cats" role="group" aria-label={`Show ${title.toLowerCase()} by category`}>
               <label htmlFor={`cat-${coll}`}>Category</label>
               <select id={`cat-${coll}`} value={activeCat} onChange={(e) => setCatFilter(e.target.value)}>
-                <option value="All">All ({items.length})</option>
+                <option value="All">All ({rows.length})</option>
                 {catNames.map((c) => <option key={c} value={c}>{c} ({catCounts[c]})</option>)}
               </select>
               <div className="adm-chipset">
                 {['All', ...catNames].map((c) => (
                   <button key={c} type="button" className="adm-chip" aria-pressed={activeCat === c} onClick={() => setCatFilter(c)}>
-                    {c} <span>{c === 'All' ? items.length : catCounts[c]}</span>
+                    {c} <span>{c === 'All' ? rows.length : catCounts[c]}</span>
                   </button>
                 ))}
               </div>
@@ -411,6 +447,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
                     {columns.map((c, ci) => (
                       <td key={c.key}>
                         {c.render ? c.render(it) : it[c.key]}
+                        {ci === 0 && it.builtinOnly && <span className="adm-tag" title="Comes with the website. Editing saves a copy into the dashboard.">Built-in</span>}
                         {ci === 0 && flagged.has(it.id) && (
                           <button type="button" className="adm-dup-badge" onClick={() => setDupOpen(true)} title="Open the duplicate check">Possible duplicate</button>
                         )}

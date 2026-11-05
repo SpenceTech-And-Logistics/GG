@@ -7,7 +7,8 @@ import { getDb } from '../../lib/firebase.js'
  */
 export async function copyBuiltins(coll, builtins, existingIds = []) {
   const { fs, db } = await getDb()
-  const have = new Set(existingIds)
+  // Built-in items the office deleted stay deleted.
+  const have = new Set([...existingIds, ...(await loadRemoved(coll))])
   const missing = builtins.filter((b) => !have.has(b.id))
   const batch = fs.writeBatch(db)
   missing.forEach(({ id, ...rest }, i) => {
@@ -15,6 +16,21 @@ export async function copyBuiltins(coll, builtins, existingIds = []) {
   })
   if (missing.length) await batch.commit()
   return missing.length
+}
+
+/*
+ * Deleted built-in items: their ids are kept in site/removed ({ projects: [...], events: [...] }),
+ * so the site stops showing them even though they are still in src/data/content.js.
+ */
+export async function loadRemoved(coll) {
+  const { fs, db } = await getDb()
+  const snap = await fs.getDoc(fs.doc(db, 'site', 'removed'))
+  return (snap.exists() && snap.data()[coll]) || []
+}
+
+export async function saveRemoved(coll, ids) {
+  const { fs, db } = await getDb()
+  await fs.setDoc(fs.doc(db, 'site', 'removed'), { [coll]: [...new Set(ids)] }, { merge: true })
 }
 
 /** Remove the imported photos that belong to an event or project. */
