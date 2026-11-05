@@ -229,6 +229,18 @@ export const defaults = {
       photos: [],
     },
     {
+      id: 'wamwangi-mutunguru-road',
+      title: 'Wamwangi–Mutunguru road: pothole filling',
+      seoTitle: 'Wamwangi–Mutunguru road pothole filling',
+      category: 'Roads and water',
+      year: '2026',
+      amount: 0,
+      description: 'Potholes on the tarmac Wamwangi–Mutunguru road being filled by KeRRA Kiambu crews: each patch is sprayed with bitumen, then filled with premix from the truck. Photographed at Icaciri on 8 October 2026.',
+      progress: '',
+      source: '',
+      photos: [],
+    },
+    {
       id: 'roads-since-2023',
       title: 'Road works across Gatundu South since 2023',
       seoTitle: 'Roads worked on in Gatundu South since 2023',

@@ -9,9 +9,9 @@ Last updated: 5 November 2026.
 |---|---|---|
 | Page titles and descriptions | Done | Every page, generated from the content (`src/lib/seo.js`). |
 | Link previews (WhatsApp, Facebook, X) | Done | Share image per page, full addresses. |
-| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (69 pages). |
+| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (70 pages). |
 | Structured data (schema.org) | Done | Person + WebSite (home), Person (About), Event (dated events), breadcrumbs (all inner pages). |
-| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 69 pages. |
+| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 70 pages. |
 | robots.txt | Done | `/admin` blocked; sitemap line added once `siteUrl` is set. |
 | Dashboard and 404 pages | Done | `noindex`. |
 | Canonical links | Done | Point to the workers.dev address until a custom domain is set. |
@@ -57,6 +57,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 6. Keep adding events and projects with photos and real dates; each one is a new page that can rank for local searches.
 
 ## Change log
+
+- **5 Nov 2026**: Wamwangi–Mutunguru road pothole filling added (4 photos). 70 pages.
 
 - **5 Nov 2026**: Three road projects added: Kabutiti road (ongoing), Kanjegeni road, Wamitaa (completed), and “Roads worked on in Gatundu South since 2023” (a list of 18 roads). 69 pages, no warnings.
 
