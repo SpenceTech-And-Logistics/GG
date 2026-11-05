@@ -28,7 +28,7 @@ export default function Navbar() {
         <Link to="/" className={`brand ${profile.logoHeader !== false ? 'has-crest' : ''}`} onClick={close} aria-label="Hon. GG Kagombe, home">
           {profile.logoHeader !== false ? (
             <>
-              <Crest tone="navy" />
+              <Crest tone="colour" />
               <span className="brand-name">
                 <small>Hon.</small>
                 GG Kagombe
