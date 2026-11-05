@@ -383,3 +383,7 @@ section[id] { scroll-margin-top: 110px; }
 .alloc thead th { font-size: 11px; padding-top: 8px; padding-bottom: 8px; }
 .alloc .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .alloc tfoot th, .alloc tfoot td { border-top: 2px solid var(--line); font-weight: 700; color: var(--ink); font-size: 15px; letter-spacing: 0; text-transform: none; }
+
+/* Videos on project pages (portrait phone clips sit side by side) */
+.video-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.video-row video { width: min(100%, 380px); max-height: 80vh; aspect-ratio: 9 / 16; object-fit: contain; background: #0d1b2a; border-radius: 12px; }

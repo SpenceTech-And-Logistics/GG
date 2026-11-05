@@ -240,6 +240,17 @@ export const defaults = {
       photos: [],
     },
     {
+      id: 'waruiru-gacumeka-road',
+      title: 'Waruiru–Gacumeka road',
+      category: 'Roads and water',
+      year: '2026',
+      amount: 0,
+      description: 'Grading of the Waruiru–Gacumeka murram road through the tea farms, courtesy of Hon. GG Kagombe. The video shows the grader levelling and shaping the road.',
+      progress: '',
+      source: '',
+      photos: [],
+    },
+    {
       id: 'roads-since-2023',
       title: 'Road works across Gatundu South since 2023',
       seoTitle: 'Roads worked on in Gatundu South since 2023',

@@ -10,12 +10,34 @@ import { getDb } from './firebase.js'
 
 const files = import.meta.glob('../assets/{projects,events}/*/*.{jpg,jpeg,png,webp}', { eager: true, query: '?url', import: 'default' })
 // Files are shown in name order: 01.jpg, 02.jpg… then before-01.jpg, before-02.jpg… (photos from before the works).
+// poster.jpg is a still from the item's video: the card picture and the video's thumbnail, not shown as a photo.
 const bundled = {}
+const posters = {}
 const beforeShots = new Set()
 for (const [path, url] of Object.entries(files).sort(([a], [b]) => a.localeCompare(b))) {
   const m = path.match(/assets\/(projects|events)\/([^/]+)\//)
-  if (m) (bundled[`${m[1]}/${m[2]}`] ||= []).push(url)
+  if (m && /\/poster\.[a-z]+$/i.test(path)) posters[`${m[1]}/${m[2]}`] = url
+  else if (m) (bundled[`${m[1]}/${m[2]}`] ||= []).push(url)
   if (/\/before-[^/]+$/.test(path)) beforeShots.add(url)
+}
+
+const videoFiles = import.meta.glob('../assets/{projects,events}/*/*.{mp4,webm}', { eager: true, query: '?url', import: 'default' })
+const videos = {}
+for (const [path, url] of Object.entries(videoFiles).sort(([a], [b]) => a.localeCompare(b))) {
+  const m = path.match(/assets\/(projects|events)\/([^/]+)\//)
+  if (m) (videos[`${m[1]}/${m[2]}`] ||= []).push(url)
+}
+
+/** The still for an item's video (poster.jpg), if it has one. */
+export function bundledPoster(type, item) {
+  const key = item?.builtinKey || item?.id
+  return (key && posters[`${type}/${key}`]) || ''
+}
+
+/** Built-in videos for a project or event: src/assets/<type>/<id>/video-01.mp4… */
+export function bundledVideos(type, item) {
+  const key = item?.builtinKey || item?.id
+  return (key && videos[`${type}/${key}`]) || []
 }
 
 /** True for built-in photos taken before the works began. */
@@ -29,7 +51,7 @@ export function bundledPhotos(type, item) {
 
 /** The picture for cards: the dashboard cover, else the first built-in photo, else the first saved photo. */
 export function coverOf(type, item) {
-  return item?.cover || bundledPhotos(type, item)[0] || item?.photos?.[0] || ''
+  return item?.cover || bundledPhotos(type, item)[0] || item?.photos?.[0] || bundledPoster(type, item) || ''
 }
 
 /** Every built-in photo, for the Gallery page. */

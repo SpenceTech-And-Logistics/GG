@@ -18,7 +18,7 @@ const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath
 // Built-in photos for a project or event, as published addresses (01.jpg first).
 const photosFor = (type, item) =>
   Object.keys(manifest)
-    .filter((k) => k.startsWith(`src/assets/${type}/${item.builtinKey || item.id}/`))
+    .filter((k) => k.startsWith(`src/assets/${type}/${item.builtinKey || item.id}/`) && /\.(jpe?g|png|webp)$/i.test(k))
     .sort()
     .map((k) => `/${manifest[k].file}`)
 const imageFor = (type, item) => photosFor(type, item)[0] || ''

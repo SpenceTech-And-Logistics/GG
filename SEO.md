@@ -9,9 +9,9 @@ Last updated: 5 November 2026.
 |---|---|---|
 | Page titles and descriptions | Done | Every page, generated from the content (`src/lib/seo.js`). |
 | Link previews (WhatsApp, Facebook, X) | Done | Share image per page, full addresses. |
-| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (70 pages). |
+| Prerendered pages | Done | `npm run build` writes one HTML file per page with its tags and heading (71 pages). |
 | Structured data (schema.org) | Done | Person + WebSite (home), Person (About), Event (dated events), breadcrumbs (all inner pages). |
-| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 70 pages. |
+| sitemap.xml with images | Done | Written at build time once `siteUrl` is set: 71 pages. |
 | robots.txt | Done | `/admin` blocked; sitemap line added once `siteUrl` is set. |
 | Dashboard and 404 pages | Done | `noindex`. |
 | Canonical links | Done | Point to the workers.dev address until a custom domain is set. |
@@ -57,6 +57,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 6. Keep adding events and projects with photos and real dates; each one is a new page that can rank for local searches.
 
 ## Change log
+
+- **5 Nov 2026**: Waruiru–Gacumeka road added with a video (project pages can now show built-in videos: `video-01.mp4`, with `poster.jpg` as the card and share image). 71 pages.
 
 - **5 Nov 2026**: Projects page: new Bursaries filter listing the allocations as a table instead of a card. Parliament page: voting section removed for good (and its dashboard field).
 

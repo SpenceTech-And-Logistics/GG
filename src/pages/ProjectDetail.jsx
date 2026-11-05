@@ -3,7 +3,7 @@ import FundingTable from '../components/FundingTable.jsx'
 import PhotoGrid from '../components/PhotoGrid.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { money, yearLabel } from '../lib/media.js'
-import { useItemPhotos } from '../lib/photos.js'
+import { bundledPoster, bundledVideos, useItemPhotos } from '../lib/photos.js'
 import { useContent } from '../lib/useContent.js'
 import NotFound from './NotFound.jsx'
 
@@ -12,6 +12,7 @@ export default function ProjectDetail() {
   const { projects } = useContent()
   const project = projects.find((p) => p.id === id)
   const photos = useItemPhotos('projects', project)
+  const videos = bundledVideos('projects', project)
 
   if (!project) return <NotFound />
   const facts = [
@@ -53,6 +54,15 @@ export default function ProjectDetail() {
       {(project.funding || []).length > 0 && (
         <section className="wrap section-tight">
           <FundingTable rows={project.funding} />
+        </section>
+      )}
+      {videos.length > 0 && (
+        <section className="wrap section-tight">
+          <Reveal className="video-row">
+            {videos.map((src, i) => (
+              <video key={src} src={src} controls playsInline preload="metadata" poster={bundledPoster('projects', project) || photos[0]?.src} aria-label={`${project.title}, video ${i + 1}`} />
+            ))}
+          </Reveal>
         </section>
       )}
       <section className="wrap section-tight">
