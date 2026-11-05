@@ -4,10 +4,6 @@ import { useContent } from '../lib/useContent.js'
 
 export default function Parliament() {
   const { parliament: p } = useContent()
-  const votes = p.votes || {}
-  const counted = (Number(votes.aye) || 0) + (Number(votes.no) || 0) + (Number(votes.absent) || 0)
-  const total = counted || 1
-  const pct = (n) => `${((n || 0) / total) * 100}%`
 
   return (
     <>
@@ -87,23 +83,7 @@ export default function Parliament() {
       )}
 
       <section className="wrap section">
-        <div className={counted ? 'split' : ''} style={{ alignItems: 'start' }}>
-          {counted > 0 && (
-          <Reveal variant="left">
-            <span className="eyebrow">Voting</span>
-            <h2 className="title" style={{ marginBottom: 24 }}>How he has voted</h2>
-            <Reveal className="votebar" variant="scale" aria-label="Voting record">
-              <i className="a" style={{ '--w': pct(votes.aye) }} />
-              <i className="n" style={{ '--w': pct(votes.no) }} />
-              <i className="x" style={{ '--w': pct(votes.absent) }} />
-            </Reveal>
-            <div className="legend">
-              <span><b>{votes.aye || 0}</b> Aye</span>
-              <span><b>{votes.no || 0}</b> No</span>
-              <span><b>{votes.absent || 0}</b> Absent</span>
-            </div>
-          </Reveal>
-          )}
+        <div>
           <Reveal variant="right">
             <span className="eyebrow">Recent motions</span>
             <h2 className="title" style={{ marginBottom: 24 }}>In the House</h2>

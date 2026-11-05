@@ -54,7 +54,6 @@ export const profileFields = [
 
 export const parliamentFields = [
   { key: 'stats', label: 'Figures', type: 'list', noun: 'figure', wide: true, fields: [{ key: 'value', label: 'Number', type: 'number' }, { key: 'label', label: 'Label' }] },
-  { key: 'votes', label: 'Votes (the voting bar shows only when these add up to more than 0)', type: 'group', wide: true, fields: [{ key: 'aye', label: 'Aye', type: 'number' }, { key: 'no', label: 'No', type: 'number' }, { key: 'absent', label: 'Absent', type: 'number' }] },
   { key: 'committees', label: 'Committees and caucuses', type: 'list', noun: 'committee', wide: true, fields: [{ key: 'name', label: 'Name' }, { key: 'role', label: 'Role' }, { key: 'note', label: 'Note' }] },
   { key: 'bills', label: 'Bills', type: 'list', noun: 'Bill', wide: true, fields: [{ key: 'title', label: 'Bill' }, { key: 'year', label: 'Year' }, { key: 'status', label: 'Status (blank = to be confirmed)' }] },
   { key: 'billsNote', label: 'Note under the Bills table', type: 'textarea', wide: true },

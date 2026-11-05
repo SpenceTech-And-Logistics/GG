@@ -1,7 +1,7 @@
 // Built-in content, taken from the Parliament of Kenya, Mzalendo and news reports.
 // The dashboard (Firebase) overrides any of this once the office saves its own version.
 
-export const CATEGORIES = ['Education', 'Tea and agriculture', 'Roads and water', 'Housing', 'Health', 'Youth and sports', 'Security', 'Public offices', 'Other']
+export const CATEGORIES = ['Education', 'Bursaries', 'Tea and agriculture', 'Roads and water', 'Housing', 'Health', 'Youth and sports', 'Security', 'Public offices', 'Other']
 export const NEWS_CATEGORIES = ['Parliament', 'Press coverage', 'Statements', 'Events']
 export const GALLERY_CATEGORIES = ['Parliament', 'Constituency', 'Events', 'Tea sector', 'Community']
 export const POSITION_CATEGORIES = ['Parliament', 'Boards', 'Business', 'Community']
@@ -72,7 +72,6 @@ export const defaults = {
       { value: 25, label: 'Committee reports' },
     ],
     // Left at zero so the voting bar stays hidden; fill in from the dashboard to show it.
-    votes: { aye: 0, no: 0, absent: 0 },
     committees: [
       { name: 'Agriculture and Livestock', role: 'Member', note: 'Reports include the tea pricing inquiry, the Plant Protection Bill and the Coffee Bill.' },
       { name: 'Public Accounts', role: 'Member', note: '' },
@@ -177,7 +176,7 @@ export const defaults = {
       id: 'ngcdf-bursaries',
       title: 'NG-CDF bursaries, 2022/23 to 2025/26',
       seoTitle: 'NG-CDF bursaries in Gatundu South, 2022 to 2026',
-      category: 'Education',
+      category: 'Bursaries',
       year: '2022/23 to 2025/26',
       ward: 'Gatundu South',
       amount: 231953852,

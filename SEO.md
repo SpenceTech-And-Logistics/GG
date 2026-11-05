@@ -58,6 +58,8 @@ Work searches: Gatundu South NG-CDF · Gatundu South projects · Gatundu South b
 
 ## Change log
 
+- **5 Nov 2026**: Projects page: new Bursaries filter listing the allocations as a table instead of a card. Parliament page: voting section removed for good (and its dashboard field).
+
 - **5 Nov 2026**: Wamwangi–Mutunguru road pothole filling added (4 photos). 70 pages.
 
 - **5 Nov 2026**: Three road projects added: Kabutiti road (ongoing), Kanjegeni road, Wamitaa (completed), and “Roads worked on in Gatundu South since 2023” (a list of 18 roads). 69 pages, no warnings.

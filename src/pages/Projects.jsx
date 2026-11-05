@@ -1,17 +1,51 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Empty from '../components/Empty.jsx'
+import FundingTable from '../components/FundingTable.jsx'
 import PageHead from '../components/PageHead.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { money, yearLabel } from '../lib/media.js'
 import { coverOf } from '../lib/photos.js'
 import { useContent } from '../lib/useContent.js'
 
+const BURSARIES = 'Bursaries'
+const isBursary = (p) => /bursar/i.test(p.category || '') || /bursar/i.test(p.title || '')
+const ksh = (n) => `KES ${Number(n).toLocaleString('en-KE')}`
+const totalOf = (p) => (p.funding || []).reduce((n, r) => n + (Number(r.amount) || 0), 0) || Number(p.amount) || 0
+
+function BursaryList({ items, spaced }) {
+  const total = items.reduce((n, p) => n + totalOf(p), 0)
+  return (
+    <div className="bursary-list" style={spaced ? { marginTop: 72 } : undefined}>
+      <Reveal>
+        <span className="eyebrow">{BURSARIES}</span>
+        <h2 className="title">{total ? `${ksh(total)} in bursaries` : 'Bursaries'}</h2>
+      </Reveal>
+      {items.map((p) => (
+        <div key={p.id} className="bursary-item">
+          <Reveal className="bursary-head">
+            <div>
+              <h3><Link to={`/projects/${p.id}`}>{p.title}</Link></h3>
+              <span className="meta">{[p.ward, yearLabel(p.year), totalOf(p) ? ksh(totalOf(p)) : ''].filter(Boolean).join(' · ')}</span>
+            </div>
+            <Link to={`/projects/${p.id}`} className="link-arrow">Details <span>→</span></Link>
+          </Reveal>
+          {(p.funding || []).length > 0 ? <FundingTable rows={p.funding} /> : p.description && <p className="lead">{p.description}</p>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function Projects() {
   const { projects } = useContent()
   const [cat, setCat] = useState('All')
-  const cats = ['All', ...new Set(projects.map((p) => p.category).filter(Boolean))]
-  const shown = cat === 'All' ? projects : projects.filter((p) => p.category === cat)
+  // Bursaries are listed as allocations (a table per bursary programme) rather than as cards.
+  const bursaries = projects.filter(isBursary)
+  const others = projects.filter((p) => !isBursary(p))
+  const cats = ['All', ...new Set(others.map((p) => p.category).filter(Boolean)), ...(bursaries.length ? [BURSARIES] : [])]
+  const shown = cat === 'All' ? others : cat === BURSARIES ? [] : others.filter((p) => p.category === cat)
+  const showBursaries = bursaries.length > 0 && (cat === 'All' || cat === BURSARIES)
 
   return (
     <>
@@ -52,6 +86,7 @@ export default function Projects() {
                 </Reveal>
               ))}
             </div>
+            {showBursaries && <BursaryList items={bursaries} spaced={shown.length > 0} />}
           </>
         )}
       </section>

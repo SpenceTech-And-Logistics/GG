@@ -170,7 +170,7 @@ export default function AdminApp() {
       body = <DocEditor docId="profile" title="Profile and career" blurb="What visitors read on the home and About pages." fields={profileFields} defaults={profileDefaults} />
       break
     case 'parliament':
-      body = <DocEditor docId="parliament" title="Parliament record" blurb="Figures, committees, Bills, votes and motions." fields={parliamentFields} defaults={parliamentDefaults} />
+      body = <DocEditor docId="parliament" title="Parliament record" blurb="Figures, committees, Bills and motions." fields={parliamentFields} defaults={parliamentDefaults} />
       break
     case 'positions':
       body = <CollectionEditor {...positionsConfig} />

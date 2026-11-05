@@ -366,3 +366,10 @@ section[id] { scroll-margin-top: 110px; }
 .item-list ol { list-style: none; counter-reset: item; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px 20px; }
 .item-list li { counter-increment: item; display: flex; align-items: baseline; gap: 12px; padding: 14px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; font: 500 18px/1.3 var(--serif); }
 .item-list li::before { content: counter(item, decimal-leading-zero); font: 700 12px/1 'Instrument Sans', sans-serif; color: #9a6412; letter-spacing: 0.08em; }
+
+/* Projects page: bursaries listed as allocation tables instead of cards */
+.bursary-item { margin-top: 28px; }
+.bursary-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.bursary-head h3 { font-size: 24px; line-height: 1.2; }
+.bursary-head h3 a:hover { color: var(--forest); }
+.bursary-head .meta { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; }
