@@ -373,3 +373,13 @@ section[id] { scroll-margin-top: 110px; }
 .bursary-head h3 { font-size: 24px; line-height: 1.2; }
 .bursary-head h3 a:hover { color: var(--forest); }
 .bursary-head .meta { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+/* Bursary allocations, one list per category as in the office spreadsheet */
+.alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.alloc { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.alloc h4 { font: 700 13px/1 var(--sans, 'Instrument Sans', sans-serif); letter-spacing: 0.14em; text-transform: uppercase; color: var(--forest); padding: 18px 20px 6px; }
+.alloc table { min-width: 0; }
+.alloc th, .alloc td { padding: 11px 20px; font-size: 15px; }
+.alloc thead th { font-size: 11px; padding-top: 8px; padding-bottom: 8px; }
+.alloc .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.alloc tfoot th, .alloc tfoot td { border-top: 2px solid var(--line); font-weight: 700; color: var(--ink); font-size: 15px; letter-spacing: 0; text-transform: none; }

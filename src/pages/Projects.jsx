@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Empty from '../components/Empty.jsx'
-import FundingTable from '../components/FundingTable.jsx'
 import PageHead from '../components/PageHead.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { money, yearLabel } from '../lib/media.js'
@@ -12,6 +11,33 @@ const BURSARIES = 'Bursaries'
 const isBursary = (p) => /bursar/i.test(p.category || '') || /bursar/i.test(p.title || '')
 const ksh = (n) => `KES ${Number(n).toLocaleString('en-KE')}`
 const totalOf = (p) => (p.funding || []).reduce((n, r) => n + (Number(r.amount) || 0), 0) || Number(p.amount) || 0
+
+/** As in the bursary spreadsheet: one list per category (Secondary, Tertiary…), each financial year with its allocation, then the total. */
+function AllocationLists({ rows }) {
+  const list = rows.filter((r) => r.category && r.year && Number(r.amount))
+  const cats = [...new Set(list.map((r) => String(r.category).trim()))]
+  return (
+    <div className="alloc-grid">
+      {cats.map((c, i) => {
+        const items = list.filter((r) => String(r.category).trim() === c).sort((a, b) => String(a.year).localeCompare(String(b.year)))
+        const total = items.reduce((n, r) => n + Number(r.amount), 0)
+        return (
+          <Reveal key={c} delay={(i % 4) * 80} className="alloc">
+            <h4>{c}</h4>
+            <table>
+              <thead><tr><th scope="col">FY</th><th scope="col" className="num">Allocation (KES)</th></tr></thead>
+              <tbody>{items.map((r) => <tr key={r.year}><td>{fyLabel(r.year)}</td><td className="num">{Number(r.amount).toLocaleString('en-KE')}</td></tr>)}</tbody>
+              <tfoot><tr><th scope="row">Total</th><td className="num">{total.toLocaleString('en-KE')}</td></tr></tfoot>
+            </table>
+          </Reveal>
+        )
+      })}
+    </div>
+  )
+}
+
+// "2022/23" → "2022/2023", as written in the spreadsheet.
+const fyLabel = (y) => String(y).replace(/^(\d{2})(\d{2})\/(\d{2})$/, (_, c, a, b) => `${c}${a}/${c}${b}`)
 
 function BursaryList({ items, spaced }) {
   const total = items.reduce((n, p) => n + totalOf(p), 0)
@@ -30,7 +56,7 @@ function BursaryList({ items, spaced }) {
             </div>
             <Link to={`/projects/${p.id}`} className="link-arrow">Details <span>→</span></Link>
           </Reveal>
-          {(p.funding || []).length > 0 ? <FundingTable rows={p.funding} /> : p.description && <p className="lead">{p.description}</p>}
+          {(p.funding || []).length > 0 ? <AllocationLists rows={p.funding} /> : p.description && <p className="lead">{p.description}</p>}
         </div>
       ))}
     </div>
