@@ -111,3 +111,14 @@
 .adm-check { flex-direction: row; align-items: flex-start; gap: 12px; cursor: pointer; }
 .adm-check input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--forest); }
 .adm-check small { display: block; }
+
+/* Category filter above a list */
+.adm-cats { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.adm-cats label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.adm-cats select { display: none; font: 500 15px 'Instrument Sans', sans-serif; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); flex: 1 1 200px; }
+.adm-chipset { display: flex; flex-wrap: wrap; gap: 8px; }
+.adm-chip { border: 1.5px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px; padding: 7px 14px; font: 600 13px 'Instrument Sans', sans-serif; cursor: pointer; }
+.adm-chip span { color: var(--muted); font-weight: 500; margin-left: 4px; }
+.adm-chip[aria-pressed='true'] { background: var(--forest); border-color: var(--forest); color: #fff; }
+.adm-chip[aria-pressed='true'] span { color: #cfe0f1; }
+@media (max-width: 700px) { .adm-cats select { display: block; } .adm-chipset { display: none; } }

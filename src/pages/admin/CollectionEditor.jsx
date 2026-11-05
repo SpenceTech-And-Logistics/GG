@@ -30,6 +30,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
     }
   })
   const [confirm, setConfirm] = useState('')
+  const [catFilter, setCatFilter] = useState('All')
   const fileRef = useRef(null)
 
   const load = useCallback(async () => {
@@ -62,6 +63,17 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   const keyOf = importer?.key || ((x) => x.title)
   const dupGroups = items ? findDuplicates(items, keyOf, ignored) : []
   const flagged = new Set(dupGroups.flatMap((g) => g.items.map((it) => it.id)))
+  // Filter the list by category (projects, events, news…) when the records have one.
+  const catField = fields.find((f) => f.key === 'category')
+  const catCounts = {}
+  for (const it of items || []) {
+    const c = String(it.category || '').trim() || 'No category'
+    catCounts[c] = (catCounts[c] || 0) + 1
+  }
+  const catNames = Object.keys(catCounts).sort((a, b) => a.localeCompare(b))
+  const showCats = Boolean(catField) && catNames.length > 1
+  const activeCat = showCats && catCounts[catFilter] ? catFilter : 'All'
+  const listed = activeCat === 'All' ? items || [] : (items || []).filter((it) => (String(it.category || '').trim() || 'No category') === activeCat)
   const extraCount = dupGroups.reduce((n, g) => n + g.items.length - 1, 0)
 
   /** What tells copies apart in the review: dates, place, photos, when added. */
@@ -144,7 +156,8 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
   }
 
   function startNew() {
-    setForm(empty)
+    // Adding while a category is picked starts the new record in that category.
+    setForm(activeCat !== 'All' && activeCat !== 'No category' ? { ...empty, category: activeCat } : empty)
     setEditing('new')
     setDupWarn(null)
     setMsg(null)
@@ -372,11 +385,28 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
         ) : items.length === 0 ? (
           <p className="adm-pad">Nothing here yet. Use “Add {noun.toLowerCase()}”{importer ? ' or “Import from file”' : ''}{builtins ? ', or copy the built-in ones in above' : ''}. Until you add one, the public site shows its built-in content.</p>
         ) : (
+          <>
+          {showCats && (
+            <div className="adm-cats" role="group" aria-label={`Show ${title.toLowerCase()} by category`}>
+              <label htmlFor={`cat-${coll}`}>Category</label>
+              <select id={`cat-${coll}`} value={activeCat} onChange={(e) => setCatFilter(e.target.value)}>
+                <option value="All">All ({items.length})</option>
+                {catNames.map((c) => <option key={c} value={c}>{c} ({catCounts[c]})</option>)}
+              </select>
+              <div className="adm-chipset">
+                {['All', ...catNames].map((c) => (
+                  <button key={c} type="button" className="adm-chip" aria-pressed={activeCat === c} onClick={() => setCatFilter(c)}>
+                    {c} <span>{c === 'All' ? items.length : catCounts[c]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="adm-scroll">
             <table className="adm-table">
               <thead><tr>{columns.map((c) => <th key={c.key}>{c.label}</th>)}<th /></tr></thead>
               <tbody>
-                {items.map((it) => (
+                {listed.map((it) => (
                   <tr key={it.id} className={flagged.has(it.id) ? 'is-dup' : ''}>
                     {columns.map((c, ci) => (
                       <td key={c.key}>
@@ -404,6 +434,7 @@ export default function CollectionEditor({ coll, title, blurb, noun, fields, col
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
     </>
